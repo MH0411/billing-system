@@ -1,4 +1,4 @@
-package eklinik_bill;
+package controller;
 
 import hu.ozeki.OzSMSMessage;
 import hu.ozeki.OzSmsClient;

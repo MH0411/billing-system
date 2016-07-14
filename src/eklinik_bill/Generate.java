@@ -5,6 +5,8 @@
  */
 package eklinik_bill;
 
+import model.Month;
+import model.ServerDetail;
 import java.awt.Desktop;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

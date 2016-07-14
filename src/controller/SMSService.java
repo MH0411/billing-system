@@ -3,7 +3,7 @@
  * May 2016
  */
 
-package eklinik_bill;
+package controller;
 
 import java.io.*;
 import java.util.logging.Level;

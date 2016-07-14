@@ -1,5 +1,7 @@
-package eklinik_bill;
+package controller;
 
+import controller.SMSService;
+import model.ServerDetail;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

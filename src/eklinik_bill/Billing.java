@@ -10,6 +10,11 @@ package eklinik_bill;
  * @author Amalina
  * @author Ho Zhen Hong
  */
+import controller.SendEmail;
+import controller.PDF;
+import controller.Search;
+import model.Month;
+import model.ServerDetail;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -69,9 +74,7 @@ public class Billing extends javax.swing.JFrame {
         btnGroup.add(jrb_Unpaid);
         btnGroup.add(jrb_Paid);
         
-        tablePatientInformation();
         tableManageMiscellaneous();
-        tableListPatientBill();
         tableBillingParameter();
     }
 
@@ -95,17 +98,28 @@ public class Billing extends javax.swing.JFrame {
         jScrollPane5 = new javax.swing.JScrollPane();
         jt_PatientInformation = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jtf_SearchPatient = new javax.swing.JTextField();
-        btn_RefreshPatient = new javax.swing.JButton();
+        jtf_SearchName = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        btn_SearchBilling = new javax.swing.JButton();
+        jtf_SearchIC = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jtf_SearchID = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
         jPanel_ManageBill = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jt_ListPatientBill = new javax.swing.JTable();
-        jtf_mb_SearchBill = new javax.swing.JTextField();
+        jtf_mb_SearchName = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jrb_Paid = new javax.swing.JRadioButton();
         jrb_Unpaid = new javax.swing.JRadioButton();
-        btn_RefreshBill = new javax.swing.JButton();
+        jLabel15 = new javax.swing.JLabel();
+        jtf_mb_SearchIC = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        jtf_mb_SearchID = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        btn_mb_SearchBill = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jt_ListItemPerPatient = new javax.swing.JTable();
@@ -218,7 +232,7 @@ public class Billing extends javax.swing.JFrame {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(516, 516, 516)
                         .addComponent(btn_GenerateBill, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -264,16 +278,41 @@ public class Billing extends javax.swing.JFrame {
         });
         jScrollPane5.setViewportView(jt_PatientInformation);
 
-        jLabel1.setText("Enter Patient Information:");
+        jLabel1.setText("Enter Patient Information to Search:");
 
-        jtf_SearchPatient.setToolTipText("Example : Patient Name, IC No. Other ID");
-
-        btn_RefreshPatient.setText("Refresh");
-        btn_RefreshPatient.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_RefreshPatientActionPerformed(evt);
+        jtf_SearchName.setToolTipText("");
+        jtf_SearchName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jtf_SearchNameMousePressed(evt);
             }
         });
+
+        jLabel6.setText("Name:");
+
+        btn_SearchBilling.setText("Search");
+        btn_SearchBilling.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SearchBillingActionPerformed(evt);
+            }
+        });
+
+        jtf_SearchIC.setToolTipText("");
+        jtf_SearchIC.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jtf_SearchICMousePressed(evt);
+            }
+        });
+
+        jLabel16.setText("IC Number:");
+
+        jtf_SearchID.setToolTipText("");
+        jtf_SearchID.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jtf_SearchIDMousePressed(evt);
+            }
+        });
+
+        jLabel17.setText("Other ID:");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -284,12 +323,22 @@ public class Billing extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane5)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jtf_SearchPatient, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jtf_SearchName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(50, 50, 50)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtf_SearchIC, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(50, 50, 50)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtf_SearchID, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_RefreshPatient)))
+                        .addComponent(btn_SearchBilling, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -297,12 +346,24 @@ public class Billing extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtf_SearchPatient, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_RefreshPatient))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_SearchBilling, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jtf_SearchName, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtf_SearchIC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtf_SearchID, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -356,7 +417,7 @@ public class Billing extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jt_ListPatientBill);
 
-        jtf_mb_SearchBill.setToolTipText("Example : Patient Name, IC No. Other ID");
+        jtf_mb_SearchName.setToolTipText("Example : Patient Name, IC No. Other ID");
 
         jLabel8.setText("Enter Bill Information:");
 
@@ -377,10 +438,22 @@ public class Billing extends javax.swing.JFrame {
             }
         });
 
-        btn_RefreshBill.setText("Refresh");
-        btn_RefreshBill.addActionListener(new java.awt.event.ActionListener() {
+        jLabel15.setText("Name:");
+
+        jtf_mb_SearchIC.setToolTipText("Example : Patient Name, IC No. Other ID");
+
+        jLabel18.setText("IC Number:");
+
+        jtf_mb_SearchID.setToolTipText("Example : Patient Name, IC No. Other ID");
+
+        jLabel19.setText("Other ID:");
+
+        jLabel20.setText("Status:");
+
+        btn_mb_SearchBill.setText("Search");
+        btn_mb_SearchBill.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_RefreshBillActionPerformed(evt);
+                btn_mb_SearchBillActionPerformed(evt);
             }
         });
 
@@ -392,38 +465,64 @@ public class Billing extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2)
-                        .addContainerGap())
+                        .addComponent(jLabel15)
+                        .addGap(33, 1142, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jtf_mb_SearchBill, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_RefreshBill)
-                        .addGap(18, 18, 18)
-                        .addComponent(jrb_Unpaid)
-                        .addGap(18, 18, 18)
-                        .addComponent(jrb_Paid)
-                        .addGap(33, 33, 33))))
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1163, Short.MAX_VALUE)
+                            .addComponent(jLabel8)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jtf_mb_SearchName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(50, 50, 50)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jtf_mb_SearchIC, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(50, 50, 50)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jtf_mb_SearchID, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(50, 50, 50)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jrb_Unpaid)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jrb_Paid)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_mb_SearchBill, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addContainerGap())))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtf_mb_SearchBill, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jrb_Paid)
-                    .addComponent(jrb_Unpaid)
-                    .addComponent(btn_RefreshBill))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtf_mb_SearchName, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel19)
+                            .addComponent(jLabel20))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jtf_mb_SearchID, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jrb_Unpaid)
+                            .addComponent(jrb_Paid)
+                            .addComponent(btn_mb_SearchBill, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtf_mb_SearchIC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jtf_mb_SearchBill.getAccessibleContext().setAccessibleDescription("Example : Bill no, Customer ID");
+        jtf_mb_SearchName.getAccessibleContext().setAccessibleDescription("Example : Bill no, Customer ID");
 
         jPanel7.setBackground(new java.awt.Color(255, 255, 255));
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("List Item of Bill"));
@@ -1310,7 +1409,6 @@ public class Billing extends javax.swing.JFrame {
                         jt_ListItemPerPatient.setValueAt(df.format(Double.parseDouble(data.get(i).get(3))), i, 3);
                         jt_ListItemPerPatient.setValueAt(df.format(Double.parseDouble(data.get(i).get(4))), i, 4);
                     }
-                    tableListPatientBill();
                     
                 } else {
                     String infoMessage = "No item selected";
@@ -1565,41 +1663,6 @@ public class Billing extends javax.swing.JFrame {
         btn_Payment.setEnabled(false);
         btn_AddItem.setEnabled(false);
         btn_DeleteItem.setEnabled(false);
-        
-        try{
-            String sql = "SELECT ch.bill_no, ch.customer_id, pb.patient_name, pb.new_ic_no, pb.id_no, pb.home_address, pb.mobile_phone, ch.quantity, ch.item_amt "
-                    + "FROM far_customer_hdr ch, pms_patient_biodata pb "
-                    + "WHERE ch.payment = 'Paid' "
-                    + "AND pb.pmi_no = ch.customer_id ";
-            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
-            DefaultTableModel model = (DefaultTableModel) jt_ListPatientBill.getModel();
-            
-            //remove all row
-            int rowCount = model.getRowCount();
-            for (int i = rowCount - 1; i >= 0; i--) {
-                model.removeRow(i);
-            }
-            
-            //add row and show value
-            for (int i = 0; i < data.size(); i++) {
-                model.addRow(new Object[]{"", "", "", "", ""});
-
-                jt_ListPatientBill.setValueAt(data.get(i).get(0), i, 0);
-                jt_ListPatientBill.setValueAt(data.get(i).get(1), i, 1);
-                jt_ListPatientBill.setValueAt(data.get(i).get(2), i, 2);
-                jt_ListPatientBill.setValueAt(data.get(i).get(3), i, 3);
-                jt_ListPatientBill.setValueAt(data.get(i).get(4), i, 4);
-                jt_ListPatientBill.setValueAt(data.get(i).get(5), i, 5);
-                jt_ListPatientBill.setValueAt(data.get(i).get(6), i, 6);
-                jt_ListPatientBill.setValueAt(data.get(i).get(7), i, 7);
-                jt_ListPatientBill.setValueAt(data.get(i).get(8), i, 8);
-            }
-            
-            tablePatientBillSorter();
-                    
-        } catch (Exception e){
-            JOptionPane.showMessageDialog(null, e);
-        }
     }//GEN-LAST:event_jrb_PaidActionPerformed
 
     /**
@@ -1609,7 +1672,6 @@ public class Billing extends javax.swing.JFrame {
     private void jrb_UnpaidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrb_UnpaidActionPerformed
         // TODO add your handling code here:
         btn_PrintReceipt.setEnabled(false);
-        tableListPatientBill();
     }//GEN-LAST:event_jrb_UnpaidActionPerformed
 
     /**
@@ -1631,24 +1693,6 @@ public class Billing extends javax.swing.JFrame {
         payment.displayBillDetail();
         payment.setVisible(true);
     }//GEN-LAST:event_btn_PaymentActionPerformed
-
-    /**
-     * Reload the table patient bill
-     * @param evt 
-     */
-    private void btn_RefreshBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_RefreshBillActionPerformed
-        // TODO add your handling code here:
-        tableListPatientBill();
-    }//GEN-LAST:event_btn_RefreshBillActionPerformed
-
-    /**
-     * Reload table information
-     * @param evt 
-     */
-    private void btn_RefreshPatientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_RefreshPatientActionPerformed
-        // TODO add your handling code here:
-        tablePatientInformation();
-    }//GEN-LAST:event_btn_RefreshPatientActionPerformed
 
     /**
      * Set input char limit
@@ -1710,9 +1754,7 @@ public class Billing extends javax.swing.JFrame {
      */
     private void tabMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabMousePressed
         // TODO add your handling code here:
-        tablePatientInformation();
         tableManageMiscellaneous();
-        tableListPatientBill();
     }//GEN-LAST:event_tabMousePressed
 
     /**
@@ -1961,46 +2003,24 @@ public class Billing extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jtf_mp_ValueKeyTyped
 
-    
-
-    /**
-     * Display list of patient
-     */
-    private void tablePatientInformation() {
-
-        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        strDate = df1.format(date);
-        strDate1 = df2.format(date);
+    private void btn_SearchBillingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SearchBillingActionPerformed
+        // TODO add your handling code here:
+        Search search = new Search();
+        ArrayList<ArrayList<String>> data = null;
         
-        try {
-            String sql = "SELECT distinct "
-                    + "pe.episode_date, pom.order_no, pe.PMI_NO, pb.NEW_IC_NO, pb.ID_NO, "
-                    + "pb.PATIENT_NAME, pb.HOME_ADDRESS, "
-                    + "pb.MOBILE_PHONE "
-                    + "FROM pms_episode pe "
-                    + "INNER JOIN pis_order_master pom "
-                    + "ON pe.PMI_NO = pom.PMI_NO "
-                    + "INNER JOIN ehr_central ec "
-                    + "ON pe.PMI_NO = ec.PMI_NO "
-                    + "INNER JOIN pms_patient_biodata pb "
-                    + "ON ec.PMI_NO = pb.PMI_NO "
-                    + "WHERE (ec.status = 1 OR ec.status = 3) "
-                    + "AND pe.STATUS ='Discharge' "
-                    + "AND pom.episode_code like '"+ strDate1 +" %' " 
-                    + "AND pe.episode_date = '"+ strDate +"' "
-                    + "AND NOT EXISTS ("
-                    + "SELECT ch.order_no FROM far_customer_hdr ch "
-                    + "WHERE ch.order_no =  pom.order_no) "
-                    + "GROUP BY pom.order_no";
-            
-            System.out.println(strDate);
-            System.out.println(strDate1);
-
-            System.out.println("host:"+host);
-            System.out.println("port:"+portNo);
-            ArrayList<ArrayList<String>> data = rc.getQuerySQL(ServerDetail.getHost(), ServerDetail.getPort(), sql);
+        String name = jtf_SearchName.getText();
+        String ic = jtf_SearchIC.getText();
+        String id = jtf_SearchID.getText();
+        
+        if (!name.equals("")){
+            data = search.searchPatientByName(name);
+        } else if (!ic.equals("")){
+            data = search.searchPatientByIC(ic);
+        } else if (!id.equals("")){
+            data = search.searchPatientByID(id);
+        }
+        
+        if (data != null){
             DefaultTableModel model = (DefaultTableModel) jt_PatientInformation.getModel();
 
             //remove all row
@@ -2022,12 +2042,77 @@ public class Billing extends javax.swing.JFrame {
                 jt_PatientInformation.setValueAt(data.get(i).get(6), i, 6);
                 jt_PatientInformation.setValueAt(data.get(i).get(7), i, 7);
             }
-
-            tablePatientInformationSorter();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
         }
-    }
+    }//GEN-LAST:event_btn_SearchBillingActionPerformed
+
+    private void jtf_SearchNameMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_SearchNameMousePressed
+        // TODO add your handling code here:
+        jtf_SearchIC.setText("");
+        jtf_SearchID.setText("");
+    }//GEN-LAST:event_jtf_SearchNameMousePressed
+
+    private void jtf_SearchICMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_SearchICMousePressed
+        // TODO add your handling code here:
+        jtf_SearchName.setText("");
+        jtf_SearchID.setText("");
+    }//GEN-LAST:event_jtf_SearchICMousePressed
+
+    private void jtf_SearchIDMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_SearchIDMousePressed
+        // TODO add your handling code here:
+        jtf_SearchIC.setText("");
+        jtf_SearchName.setText("");
+    }//GEN-LAST:event_jtf_SearchIDMousePressed
+
+    private void btn_mb_SearchBillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mb_SearchBillActionPerformed
+        // TODO add your handling code here:
+        
+        Search search = new Search();
+        ArrayList<ArrayList<String>> data = null;
+        
+        String name = jtf_mb_SearchName.getText();
+        String ic = jtf_mb_SearchIC.getText();
+        String id = jtf_mb_SearchID.getText();
+        String status = "";
+        
+        if (jrb_Paid.isSelected()){
+            status = "Paid";
+        } else if (jrb_Unpaid.isSelected()){
+            status = "Unpaid";
+        }
+        
+        if (!name.equals("")){
+            data = search.searchBillByName(name, status);
+        } else if (!ic.equals("")){
+            data = search.searchBillByIC(ic, status);
+        } else if (!id.equals("")){
+            data = search.searchBillByID(id, status);
+        }
+        
+        if (data != null){
+            DefaultTableModel model = (DefaultTableModel) jt_ListPatientBill.getModel();
+
+            //remove all row
+            int rowCount = model.getRowCount();
+            for (int i = rowCount - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+
+            //add row and show value
+            for (int i = 0; i < data.size(); i++) {
+                model.addRow(new Object[]{"", "", "", "", ""});
+
+                jt_ListPatientBill.setValueAt(data.get(i).get(0), i, 0);
+                jt_ListPatientBill.setValueAt(data.get(i).get(1), i, 1);
+                jt_ListPatientBill.setValueAt(data.get(i).get(2), i, 2);
+                jt_ListPatientBill.setValueAt(data.get(i).get(3), i, 3);
+                jt_ListPatientBill.setValueAt(data.get(i).get(4), i, 4);
+                jt_ListPatientBill.setValueAt(data.get(i).get(5), i, 5);
+                jt_ListPatientBill.setValueAt(data.get(i).get(6), i, 6);
+                jt_ListPatientBill.setValueAt(data.get(i).get(7), i, 7);
+                jt_ListPatientBill.setValueAt(df.format(Double.parseDouble(data.get(i).get(8))), i, 8);
+            }
+        }
+    }//GEN-LAST:event_btn_mb_SearchBillActionPerformed
 
     /**
      * Display manage miscellaneous items.
@@ -2058,47 +2143,6 @@ public class Billing extends javax.swing.JFrame {
             
             tableMiscellaneousItemSorter();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
-    /**
-     * Display list of patient's bill
-     */
-    public void tableListPatientBill(){
-        try{
-            String sql = "SELECT ch.bill_no, ch.customer_id, pb.patient_name, pb.new_ic_no, pb.id_no, "
-                    + "pb.home_address, pb.mobile_phone, ch.quantity, (ch.item_amt-ch.amt_paid)"
-                    + "FROM far_customer_hdr ch, pms_patient_biodata pb "
-                    + "WHERE ch.payment = 'Unpaid' "
-                    + "AND pb.pmi_no = ch.customer_id ";
-            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
-            DefaultTableModel model = (DefaultTableModel) jt_ListPatientBill.getModel();
-            
-            //remove all row
-            int rowCount = model.getRowCount();
-            for (int i = rowCount - 1; i >= 0; i--) {
-                model.removeRow(i);
-            }
-            
-            //add row and show value
-            for (int i = 0; i < data.size(); i++) {
-                model.addRow(new Object[]{"", "", "", "", ""});
-
-                jt_ListPatientBill.setValueAt(data.get(i).get(0), i, 0);
-                jt_ListPatientBill.setValueAt(data.get(i).get(1), i, 1);
-                jt_ListPatientBill.setValueAt(data.get(i).get(2), i, 2);
-                jt_ListPatientBill.setValueAt(data.get(i).get(3), i, 3);
-                jt_ListPatientBill.setValueAt(data.get(i).get(4), i, 4);
-                jt_ListPatientBill.setValueAt(data.get(i).get(5), i, 5);
-                jt_ListPatientBill.setValueAt(data.get(i).get(6), i, 6);
-                jt_ListPatientBill.setValueAt(data.get(i).get(7), i, 7);
-                jt_ListPatientBill.setValueAt(df.format(Double.parseDouble(data.get(i).get(8))), i, 8);
-            }
-            
-            tablePatientBillSorter();
-                    
-        } catch (Exception e){
             JOptionPane.showMessageDialog(null, e);
         }
     }
@@ -2134,46 +2178,6 @@ public class Billing extends javax.swing.JFrame {
         } catch (Exception e){
              JOptionPane.showMessageDialog(null, e);
         }
-    }
-    
-    /**
-     * Detect and sort table patient information content based on the input
-     */
-    public void tablePatientInformationSorter() {
-        TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(jt_PatientInformation.getModel());
-        jt_PatientInformation.setRowSorter(rowSorter);
-
-        jtf_SearchPatient.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                String text = jtf_SearchPatient.getText();
-
-                if (text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
-
-                } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                String text = jtf_SearchPatient.getText();
-
-                if (text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
-                } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-        });
     }
     
      /**
@@ -2217,46 +2221,6 @@ public class Billing extends javax.swing.JFrame {
     }
     
     /**
-     * Detect and sort table list patient bill content based on the input
-     */
-    public void tablePatientBillSorter(){
-        TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(jt_ListPatientBill.getModel());
-        jt_ListPatientBill.setRowSorter(rowSorter);
-
-        jtf_mb_SearchBill.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                String text = jtf_mb_SearchBill.getText();
-
-                if (text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
-
-                } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                String text = jtf_mb_SearchBill.getText();
-
-                if (text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
-                } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-        });
-    }
-    
-    /**
      * Auto generate parameter code.
      */
     private void generateParamCode(){
@@ -2269,7 +2233,7 @@ public class Billing extends javax.swing.JFrame {
         jtf_mp_Code.setText(code);
     }
     
-        /**
+    /**
      * Auto generate parameter code.
      */
     private void generateMiscItemCode(){
@@ -2295,9 +2259,9 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_GenerateBill;
     private javax.swing.JButton btn_Payment;
     private javax.swing.JButton btn_PrintReceipt;
-    private javax.swing.JButton btn_RefreshBill;
     private javax.swing.JButton btn_RefreshMM;
-    private javax.swing.JButton btn_RefreshPatient;
+    private javax.swing.JButton btn_SearchBilling;
+    private javax.swing.JButton btn_mb_SearchBill;
     private javax.swing.JButton btn_mm_Add;
     private javax.swing.JButton btn_mm_Cancel;
     private javax.swing.JButton btn_mm_Delete;
@@ -2312,10 +2276,17 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -2346,8 +2317,12 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JTable jt_ListPatientBill;
     private javax.swing.JTable jt_MM;
     private javax.swing.JTable jt_PatientInformation;
-    private javax.swing.JTextField jtf_SearchPatient;
-    private javax.swing.JTextField jtf_mb_SearchBill;
+    private javax.swing.JTextField jtf_SearchIC;
+    private javax.swing.JTextField jtf_SearchID;
+    private javax.swing.JTextField jtf_SearchName;
+    private javax.swing.JTextField jtf_mb_SearchIC;
+    private javax.swing.JTextField jtf_mb_SearchID;
+    private javax.swing.JTextField jtf_mb_SearchName;
     private javax.swing.JTextField jtf_mm_BuyPrice;
     private javax.swing.JTextField jtf_mm_ItemCd;
     private javax.swing.JTextField jtf_mm_ItemDesc;

@@ -5,6 +5,8 @@
  */
 package eklinik_bill;
 
+import model.Month;
+import model.ServerDetail;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
