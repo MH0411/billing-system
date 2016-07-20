@@ -48,6 +48,7 @@ public class Search {
                     + "SELECT ch.order_no FROM far_customer_hdr ch "
                     + "WHERE ch.order_no =  pom.order_no) "
                     + "GROUP BY pom.order_no";
+        System.out.println(sql);
         ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql);
         return data;
     }

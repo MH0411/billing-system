@@ -166,6 +166,8 @@ public class Billing extends javax.swing.JFrame {
         btn_mp_Add = new javax.swing.JButton();
         btn_mp_Update = new javax.swing.JButton();
         btn_mp_Delete = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        jPanel11 = new javax.swing.JPanel();
         btn_Back = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
 
@@ -417,7 +419,12 @@ public class Billing extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jt_ListPatientBill);
 
-        jtf_mb_SearchName.setToolTipText("Example : Patient Name, IC No. Other ID");
+        jtf_mb_SearchName.setToolTipText("");
+        jtf_mb_SearchName.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jtf_mb_SearchNameMousePressed(evt);
+            }
+        });
 
         jLabel8.setText("Enter Bill Information:");
 
@@ -440,11 +447,21 @@ public class Billing extends javax.swing.JFrame {
 
         jLabel15.setText("Name:");
 
-        jtf_mb_SearchIC.setToolTipText("Example : Patient Name, IC No. Other ID");
+        jtf_mb_SearchIC.setToolTipText("");
+        jtf_mb_SearchIC.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jtf_mb_SearchICMousePressed(evt);
+            }
+        });
 
         jLabel18.setText("IC Number:");
 
-        jtf_mb_SearchID.setToolTipText("Example : Patient Name, IC No. Other ID");
+        jtf_mb_SearchID.setToolTipText("");
+        jtf_mb_SearchID.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jtf_mb_SearchIDMousePressed(evt);
+            }
+        });
 
         jLabel19.setText("Other ID:");
 
@@ -1036,6 +1053,36 @@ public class Billing extends javax.swing.JFrame {
         );
 
         tab.addTab("Manage Parameter", jPanel3);
+
+        jPanel10.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1195, Short.MAX_VALUE)
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 692, Short.MAX_VALUE)
+        );
+
+        tab.addTab("Year End Process", jPanel10);
+
+        jPanel11.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1195, Short.MAX_VALUE)
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 692, Short.MAX_VALUE)
+        );
+
+        tab.addTab("Report", jPanel11);
 
         btn_Back.setText("Back to Main Menu");
         btn_Back.addActionListener(new java.awt.event.ActionListener() {
@@ -2012,6 +2059,7 @@ public class Billing extends javax.swing.JFrame {
         String ic = jtf_SearchIC.getText();
         String id = jtf_SearchID.getText();
         
+        System.out.println(name + ic + id);
         if (!name.equals("")){
             data = search.searchPatientByName(name);
         } else if (!ic.equals("")){
@@ -2113,6 +2161,24 @@ public class Billing extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btn_mb_SearchBillActionPerformed
+
+    private void jtf_mb_SearchNameMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_mb_SearchNameMousePressed
+        // TODO add your handling code here:
+        jtf_mb_SearchIC.setText("");
+        jtf_mb_SearchID.setText("");
+    }//GEN-LAST:event_jtf_mb_SearchNameMousePressed
+
+    private void jtf_mb_SearchICMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_mb_SearchICMousePressed
+        // TODO add your handling code here:
+        jtf_mb_SearchName.setText("");
+        jtf_mb_SearchID.setText("");
+    }//GEN-LAST:event_jtf_mb_SearchICMousePressed
+
+    private void jtf_mb_SearchIDMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtf_mb_SearchIDMousePressed
+        // TODO add your handling code here:
+        jtf_mb_SearchName.setText("");
+        jtf_mb_SearchIC.setText("");
+    }//GEN-LAST:event_jtf_mb_SearchIDMousePressed
 
     /**
      * Display manage miscellaneous items.
@@ -2291,6 +2357,8 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

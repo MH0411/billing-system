@@ -163,7 +163,6 @@ public class PDF {
             table.setLockedWidth(true);
             table.setTotalWidth(document.right() - document.left());
             
-            //--------------------------receipt no------------------------------------------>
             PdfPTable header = new PdfPTable(4);
             header.setWidths(new float[]{3f, 4f, 3.5f, 4f});
             header.setLockedWidth(true);

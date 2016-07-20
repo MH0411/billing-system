@@ -197,8 +197,6 @@ public class SendEmail {
             }
             rd.close();
             
-            SMSService service = new SMSService("+6" + tel, message, ServerDetail.getHost());
-            
         } catch (MalformedURLException ex) {
             Logger.getLogger(SendEmail.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
