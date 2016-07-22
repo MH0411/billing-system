@@ -30,17 +30,17 @@ import model.ServerDetail;
  */
 public class Report {
     
-    private static RMIConnector rc = new RMIConnector();
-    private static String host = "10.73.32.200";
-    private static int port = 1099;
-    private static DecimalFormat df = new DecimalFormat("0.00");
-    private static DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); 
-    private static DateFormat year = new SimpleDateFormat("yyyy");
-    private static Date date = new Date();
-    private static String strDate = dateFormat.format(date);
-    private static String strYear = year.format(date);
+    private RMIConnector rc = new RMIConnector();
+    private String host = ServerDetail.getHost();
+    private int port = ServerDetail.getPort();
+    private DecimalFormat df = new DecimalFormat("0.00");
+    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); 
+    private DateFormat year = new SimpleDateFormat("yyyy");
+    private Date date = new Date();
+    private String strDate = dateFormat.format(date);
+    private String strYear = year.format(date);
     
-    public static void main(String[] args) {
+    public void generateYearlyStatement() {
         
         String sql = 
                 "SELECT "
@@ -464,19 +464,12 @@ public class Report {
                 
             }catch(Exception e){
             }
-            
-//            String sql1 = "UPDATE far_customer_ledger set "
-//                    + "cr_amt_1 = '0', cr_amt_2 = '0', cr_amt_3 = '0', cr_amt_4 = '0', "
-//                    + "cr_amt_5 = '0', cr_amt_6 = '0', cr_amt_7 = '0', cr_amt_8 = '0', "
-//                    + "cr_amt_9 = '0', cr_amt_10 = '0', cr_amt_11 = '0', cr_amt_12 = '0', cr_amt_13 = '"+ totalYearCredit +"', "
-//                    + "dr_amt_1 = '0', dr_amt_2 = '0', dr_amt_3 = '0', dr_amt_4 = '0', "
-//                    + "dr_amt_5 = '0', dr_amt_6 = '0', dr_amt_7 = '0', dr_amt_8 = '0', "
-//                    + "dr_amt_9 = '0', dr_amt_10 = '0', dr_amt_11 = '0', dr_amt_12 = '0', dr_amt_13 = '"+ totalYearDebit +"' "
-//                    + "WHERE customer_id = '"+ pmiNo +"'";
-//            rc.setQuerySQL(host, port, sql1);
         }
         
         //Send pdf through email
     }
     
+    public void generateDetailsStatement(){
+        
+    }
 }

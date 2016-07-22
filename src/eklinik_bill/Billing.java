@@ -12,6 +12,7 @@ package eklinik_bill;
  */
 import controller.SendEmail;
 import controller.PDF;
+import controller.Report;
 import controller.Search;
 import model.Month;
 import model.ServerDetail;
@@ -167,7 +168,11 @@ public class Billing extends javax.swing.JFrame {
         btn_mp_Update = new javax.swing.JButton();
         btn_mp_Delete = new javax.swing.JButton();
         jPanel10 = new javax.swing.JPanel();
+        btn_BackupData = new javax.swing.JButton();
+        btn_StartProcess = new javax.swing.JButton();
+        btn_RetoreData = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
+        btn_YearlyStatement = new javax.swing.JButton();
         btn_Back = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
 
@@ -1056,30 +1061,77 @@ public class Billing extends javax.swing.JFrame {
 
         jPanel10.setBackground(new java.awt.Color(255, 255, 255));
 
+        btn_BackupData.setText("Backup Customer Data");
+        btn_BackupData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_BackupDataActionPerformed(evt);
+            }
+        });
+
+        btn_StartProcess.setText("Start Year End Processing");
+        btn_StartProcess.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_StartProcessActionPerformed(evt);
+            }
+        });
+
+        btn_RetoreData.setText("Restore Customer Data");
+        btn_RetoreData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_RetoreDataActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1195, Short.MAX_VALUE)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addGap(79, 79, 79)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btn_BackupData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_StartProcess, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                    .addComponent(btn_RetoreData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(897, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 692, Short.MAX_VALUE)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addGap(100, 100, 100)
+                .addComponent(btn_BackupData, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(btn_StartProcess, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(btn_RetoreData, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(419, Short.MAX_VALUE))
         );
 
         tab.addTab("Year End Process", jPanel10);
 
         jPanel11.setBackground(new java.awt.Color(255, 255, 255));
 
+        btn_YearlyStatement.setText("Customer Yearly Account Statement");
+        btn_YearlyStatement.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_YearlyStatementActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1195, Short.MAX_VALUE)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addGap(79, 79, 79)
+                .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(897, 897, 897))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 692, Short.MAX_VALUE)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addGap(93, 93, 93)
+                .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(568, Short.MAX_VALUE))
         );
 
         tab.addTab("Report", jPanel11);
@@ -2180,6 +2232,26 @@ public class Billing extends javax.swing.JFrame {
         jtf_mb_SearchIC.setText("");
     }//GEN-LAST:event_jtf_mb_SearchIDMousePressed
 
+    private void btn_BackupDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_BackupDataActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btn_BackupDataActionPerformed
+
+    private void btn_StartProcessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_StartProcessActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btn_StartProcessActionPerformed
+
+    private void btn_RetoreDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_RetoreDataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_RetoreDataActionPerformed
+
+    private void btn_YearlyStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_YearlyStatementActionPerformed
+        // TODO add your handling code here:
+        Report report = new Report();
+        report.generateYearlyStatement();
+    }//GEN-LAST:event_btn_YearlyStatementActionPerformed
+
     /**
      * Display manage miscellaneous items.
      */
@@ -2321,12 +2393,16 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.ButtonGroup btnGroup;
     private javax.swing.JButton btn_AddItem;
     private javax.swing.JButton btn_Back;
+    private javax.swing.JButton btn_BackupData;
     private javax.swing.JButton btn_DeleteItem;
     private javax.swing.JButton btn_GenerateBill;
     private javax.swing.JButton btn_Payment;
     private javax.swing.JButton btn_PrintReceipt;
     private javax.swing.JButton btn_RefreshMM;
+    private javax.swing.JButton btn_RetoreData;
     private javax.swing.JButton btn_SearchBilling;
+    private javax.swing.JButton btn_StartProcess;
+    private javax.swing.JButton btn_YearlyStatement;
     private javax.swing.JButton btn_mb_SearchBill;
     private javax.swing.JButton btn_mm_Add;
     private javax.swing.JButton btn_mm_Cancel;
