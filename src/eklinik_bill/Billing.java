@@ -14,6 +14,7 @@ import controller.SendEmail;
 import controller.PDF;
 import controller.Report;
 import controller.Search;
+import controller.YearEndProcess;
 import model.Month;
 import model.ServerDetail;
 import java.awt.Desktop;
@@ -173,6 +174,12 @@ public class Billing extends javax.swing.JFrame {
         btn_RetoreData = new javax.swing.JButton();
         jPanel11 = new javax.swing.JPanel();
         btn_YearlyStatement = new javax.swing.JButton();
+        jtf_ReportIC = new javax.swing.JTextField();
+        btn_DetailsStatement = new javax.swing.JButton();
+        btn_MonthlyStatement = new javax.swing.JButton();
+        jcb_Month = new javax.swing.JComboBox<>();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
         btn_Back = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
 
@@ -1117,21 +1124,66 @@ public class Billing extends javax.swing.JFrame {
             }
         });
 
+        btn_DetailsStatement.setText("Customer Details Account Statement");
+        btn_DetailsStatement.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_DetailsStatementActionPerformed(evt);
+            }
+        });
+
+        btn_MonthlyStatement.setText("Customer Monthly Account Statement");
+        btn_MonthlyStatement.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_MonthlyStatementActionPerformed(evt);
+            }
+        });
+
+        jcb_Month.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }));
+
+        jLabel21.setText("IC Number : ");
+
+        jLabel22.setText("Month : ");
+
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGap(79, 79, 79)
-                .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(897, 897, 897))
+                .addGap(80, 80, 80)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jtf_ReportIC)
+                            .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+                            .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(42, 42, 42))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(jLabel21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel22)
+                    .addComponent(btn_MonthlyStatement, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+                    .addComponent(jcb_Month, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(593, 593, 593))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGap(93, 93, 93)
-                .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(568, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel22))
+                .addGap(20, 20, 20)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jcb_Month, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(jtf_ReportIC))
+                .addGap(50, 50, 50)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_MonthlyStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
+                .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(415, Short.MAX_VALUE))
         );
 
         tab.addTab("Report", jPanel11);
@@ -2234,23 +2286,37 @@ public class Billing extends javax.swing.JFrame {
 
     private void btn_BackupDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_BackupDataActionPerformed
         // TODO add your handling code here:
-        
+        YearEndProcess yep = new YearEndProcess();
+        yep.backup();
     }//GEN-LAST:event_btn_BackupDataActionPerformed
 
     private void btn_StartProcessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_StartProcessActionPerformed
         // TODO add your handling code here:
-        
+        YearEndProcess yep = new YearEndProcess();
+        yep.startProcess();
     }//GEN-LAST:event_btn_StartProcessActionPerformed
 
     private void btn_RetoreDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_RetoreDataActionPerformed
         // TODO add your handling code here:
+        YearEndProcess yep = new YearEndProcess();
+        yep.restore();
     }//GEN-LAST:event_btn_RetoreDataActionPerformed
 
     private void btn_YearlyStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_YearlyStatementActionPerformed
         // TODO add your handling code here:
         Report report = new Report();
-        report.generateYearlyStatement();
+        report.generateYearlyStatement(jtf_ReportIC.getText());
     }//GEN-LAST:event_btn_YearlyStatementActionPerformed
+
+    private void btn_DetailsStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DetailsStatementActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_DetailsStatementActionPerformed
+
+    private void btn_MonthlyStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_MonthlyStatementActionPerformed
+        // TODO add your handling code here:
+        Report report = new Report();
+        report.generateMonthlyStatement(jtf_ReportIC.getText(), jcb_Month.getSelectedItem().toString());
+    }//GEN-LAST:event_btn_MonthlyStatementActionPerformed
 
     /**
      * Display manage miscellaneous items.
@@ -2395,7 +2461,9 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_Back;
     private javax.swing.JButton btn_BackupData;
     private javax.swing.JButton btn_DeleteItem;
+    private javax.swing.JButton btn_DetailsStatement;
     private javax.swing.JButton btn_GenerateBill;
+    private javax.swing.JButton btn_MonthlyStatement;
     private javax.swing.JButton btn_Payment;
     private javax.swing.JButton btn_PrintReceipt;
     private javax.swing.JButton btn_RefreshMM;
@@ -2425,6 +2493,8 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -2453,6 +2523,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JCheckBox jcb_Enable;
+    private javax.swing.JComboBox<String> jcb_Month;
     private javax.swing.JRadioButton jrb_Paid;
     private javax.swing.JRadioButton jrb_Unpaid;
     private javax.swing.JTable jt_BillDescription;
@@ -2461,6 +2532,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JTable jt_ListPatientBill;
     private javax.swing.JTable jt_MM;
     private javax.swing.JTable jt_PatientInformation;
+    private javax.swing.JTextField jtf_ReportIC;
     private javax.swing.JTextField jtf_SearchIC;
     private javax.swing.JTextField jtf_SearchID;
     private javax.swing.JTextField jtf_SearchName;

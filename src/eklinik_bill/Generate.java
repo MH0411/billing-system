@@ -444,9 +444,9 @@ public final class Generate extends javax.swing.JFrame {
                     + "VALUES('"+ pmiNo +"','"+ billNo +"','"+ stringDate +"','"+ name +"','"+ grandTotal +"','"+ itemQuantity +"' , '"+ orderNo +"', 'Unpaid', '0')";
             rc.setQuerySQL(host, port, sql2);
                 
-            //Get customer_ledger current month credit add to current bill total
-            String creditMonth = new Month().getCreditMonth();
-            String sql3 = "SELECT cl."+ creditMonth +" "
+            //Get customer_ledger current month debit add to current bill total
+            String debitMonth = new Month().getDebitMonth();
+            String sql3 = "SELECT cl."+ debitMonth +" "
                     + "FROM far_customer_ledger cl, pms_patient_biodata pb "
                     + "WHERE cl.customer_id  = '"+ pmiNo +"' "
                     + "AND pb.pmi_no = '"+ pmiNo +"' ";
@@ -454,7 +454,7 @@ public final class Generate extends javax.swing.JFrame {
             
             if (data == null) {
                 //When no customer exist insert
-                String sql4 = "INSERT into far_customer_ledger(customer_id, bill_no, txn_date, bill_desc, bill_amt, "+ creditMonth +" )"
+                String sql4 = "INSERT into far_customer_ledger(customer_id, bill_no, txn_date, bill_desc, bill_amt, "+ debitMonth +" )"
                         + "VALUES('"+ pmiNo +"', '"+ billNo +"', '"+ stringDate +"', '"+ name +"', '"+ grandTotal +"', '"+ grandTotal +"' )";
                 rc.setQuerySQL(host, port, sql4);
             
@@ -462,15 +462,15 @@ public final class Generate extends javax.swing.JFrame {
                 //When customer exits update
                 if (data.get(0).get(0) == null){
                     String sql5 = "UPDATE far_customer_ledger "
-                            + "SET "+ creditMonth +" = '"+ grandTotal +"', bill_amt = '"+ grandTotal +"', txn_date = '"+ stringDate +"' "
+                            + "SET "+ debitMonth +" = '"+ grandTotal +"', bill_amt = '"+ grandTotal +"', txn_date = '"+ stringDate +"' "
                             + "WHERE customer_id = '"+ pmiNo +"' ";
                     rc.setQuerySQL(host, port, sql5);
                     
                 }else{
-                    //When current month credit exist update
-                    double credit = Double.parseDouble(data.get(0).get(0)) + grandTotal;
+                    //When current month debit exist update
+                    double debit = Double.parseDouble(data.get(0).get(0)) + grandTotal;
                     String sql5 = "UPDATE far_customer_ledger "
-                            + "SET "+ creditMonth +" = '"+ credit +"', bill_amt = '"+ grandTotal +"', txn_date = '"+ stringDate +"' "
+                            + "SET "+ debitMonth +" = '"+ debit +"', bill_amt = '"+ grandTotal +"', txn_date = '"+ stringDate +"' "
                             + "WHERE customer_id = '"+ pmiNo +"' ";
                     rc.setQuerySQL(host, port, sql5);
                 }

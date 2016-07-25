@@ -288,23 +288,23 @@ public class Payment extends javax.swing.JFrame {
             try {
                 month.setMonth(billNo.substring(10,12));
                 
-                //Get current debit from customer ledger
-                String sql = "SELECT cl." + month.getDebitMonth() + " "
+                //Get current credit from customer ledger
+                String sql = "SELECT cl." + month.getCreditMonth() + " "
                         + "FROM far_customer_ledger cl, pms_patient_biodata pb "
                         + "WHERE cl.customer_id = '" + custId + "' "
                         + "AND pb.pmi_no = '" + custId + "'";
                 ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql);
-                String debitMonth = data.get(0).get(0);
+                String creditMonth = data.get(0).get(0);
                 
-                if (debitMonth == null){
-                    debitMonth = "0";
+                if (creditMonth == null){
+                    creditMonth = "0";
                 }
 
-                debitMonth = String.valueOf(Double.parseDouble(debitMonth) + Double.parseDouble(amount));
+                creditMonth = String.valueOf(Double.parseDouble(creditMonth) + Double.parseDouble(amount));
                 
-                //Update customer ledger debit
+                //Update customer ledger credit
                 String sql1 = "UPDATE far_customer_ledger "
-                        + "SET pay_method = '" + method + "', " + month.getDebitMonth() + " = '" + debitMonth + "', txn_date = '" + txnDate + "' "
+                        + "SET pay_method = '" + method + "', " + month.getCreditMonth() + " = '" + creditMonth + "', txn_date = '" + txnDate + "' "
                         + "where customer_id = '" + custId + "' ";
                 rc.setQuerySQL(host, port, sql1);
                 
