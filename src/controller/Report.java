@@ -5,9 +5,7 @@
  */
 package controller;
 
-import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
@@ -17,15 +15,15 @@ import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.Desktop;
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import main.RMIConnector;
 import model.Month;
 import model.ServerDetail;
@@ -41,10 +39,12 @@ public class Report {
     private int port = ServerDetail.getPort();
     private DecimalFormat df = new DecimalFormat("0.00");
     private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); 
-    private DateFormat year = new SimpleDateFormat("yyyy");
+    private DateFormat monthFormat = new SimpleDateFormat("MM");
+    private DateFormat yearFormat = new SimpleDateFormat("yyyy");
     private Date date = new Date();
     private String strDate = dateFormat.format(date);
-    private String strYear = year.format(date);
+    private String strMon = monthFormat.format(date);
+    private String strYear = yearFormat.format(date);
     
     public void generateYearlyStatement(String ic) {
         
@@ -467,290 +467,35 @@ public class Report {
                 document.add(tableFooter);
                 document.close();
                 writer.close();
-                
+                Desktop.getDesktop().open(new File("YearStatement.pdf"));
             }catch(Exception e){
             }
         }
     }
     
     public void generateDetailsStatement(String ic){
-        
-    }
-    
-    public void generateMonthlyStatement(String ic, String month){
-        String[] strMonth = Month.selectedMonth(month);
-        
-        if (strMonth != null){
-            String dr = strMonth[0]; 
-            String cr = strMonth[1];
-            String period = strMonth[2];
-            
-            String sql1 = "SELECT "
-                    + "pb.pmi_no, pb.patient_name, pb.id_no, pb.home_address, pb.mobile_phone, pb.email_address, "
-                    + "cl."+ dr +", cl."+ cr +" "
-                    + "FROM pms_patient_biodata pb, far_customer_ledger cl "
-                    + "WHERE pb.pmi_no = cl.customer_id "
-                    + "AND pb.new_ic_no = '"+ ic +"'";
+            String sql1 = "SELECT DISTINCT "
+                    + "pb.pmi_no, pb.patient_name, pb.id_no, pb.home_address, pb.mobile_phone, pb.email_address "
+                    + "FROM far_customer_ledger cl, pms_patient_biodata pb "
+                    + "WHERE pb.new_ic_no = '"+ ic +"'";
             ArrayList<ArrayList<String>> dataPatient = rc.getQuerySQL(host, port, sql1);
             
-            String pmiNo = dataPatient.get(0).get(0);
-            String name = dataPatient.get(0).get(1);
-            String id = dataPatient.get(0).get(2);
-            String address = dataPatient.get(0).get(3);
-            String phone = dataPatient.get(0).get(4);
-            String email = dataPatient.get(0).get(5);
-            String debit = dataPatient.get(0).get(6);
-            String credit = dataPatient.get(0).get(7);
-            
-            String sql2 = "SELECT "
-                    + "ch.txn_date, ch.bill_no, ch.item_amt "
-                    + "FROM far_customer_hdr ch, pms_patient_biodata pb "
-                    + "WHERE ch.customer_id = pb.pmi_no "
-                    + "AND ch.customer_id = '"+ ic +"' "
-                    + "AND ch.txn_date LIKE %'"+ period +"'% "
-                    + "ORDER BY ch.txn_date, ch.bill_no";
-            ArrayList<ArrayList<String>> dataBill = rc.getQuerySQL(host, port, sql2);
-            
-            //create new document
-            Document document = new Document(PageSize.A4, 36, 36, 64, 36) {}; 
-            document.setMargins(40, 30, 50, 50); 
-            
-            try {
-                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("MonthlyStatement.pdf"));
-                document.open();
+            if(!dataPatient.isEmpty()){
+                String pmiNo = dataPatient.get(0).get(0);
+                String name = dataPatient.get(0).get(1);
+                String id = dataPatient.get(0).get(2);
+                String address = dataPatient.get(0).get(3);
+                String phone = dataPatient.get(0).get(4);
+                String email = dataPatient.get(0).get(5);
                 
-                //initialize pdf
-                Font recno = new Font(Font.TIMES_ROMAN, 10);
-                Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-                Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-                Font rectemja = new Font(Font.COURIER, 12);
-                Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
-                Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
-                
-                //header
-                PdfPTable table = new PdfPTable(6);
-                table.setWidths(new float[]{0.5f, 1.5f, 4f, 1.5f, 1.5f, 1.5f});
-                table.setLockedWidth(true);
-                table.setTotalWidth(document.right() - document.left());
+                //create new document
+                Document document = new Document(PageSize.A4, 36, 36, 64, 36) {}; 
+                document.setMargins(40, 30, 50, 50); 
 
-                PdfPTable tableHeader = new PdfPTable(4);
-                tableHeader.setWidths(new float[]{3f, 4f, 3.5f, 4f});
-                tableHeader.setLockedWidth(true);
-                tableHeader.setTotalWidth(document.right() - document.left());
+                try {
+                    PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("DetailsStatement.pdf"));
+                    document.open();
 
-                Image logo = Image.getInstance("pic/logo.png");
-                logo.scaleAbsolute(115, 50);
-
-                PdfPCell cellLogo = new PdfPCell(logo);
-                cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cellLogo.setBorder(Rectangle.NO_BORDER);
-                cellLogo.setColspan(2);
-                cellLogo.setLeading(15f, 0.3f);
-                tableHeader.addCell(cellLogo);
-                
-                String addr = 
-                        " Universiti Teknikal Malaysia Melaka, \n"
-                        + " Hang Tuah Jaya, \n"
-                        + " 76100 Durian Tunggal, \n"
-                        + " Melaka, Malaysia.";
-
-                PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
-                cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellAddress.setBorder(Rectangle.NO_BORDER);
-                cellAddress.setColspan(2);
-                tableHeader.addCell(cellAddress);
-                
-                PdfPCell cellAnnual = new PdfPCell(new Phrase("\n"+ month +" Account Statement\n\n", recti));
-                cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cellAnnual.setBorder(Rectangle.NO_BORDER);
-                cellAnnual.setColspan(4);
-                tableHeader.addCell(cellAnnual);                
-                
-                //Customer Details
-                PdfPTable tableCust = new PdfPTable(1);
-                tableCust.setWidths(new float[]{10f});
-                tableCust.setLockedWidth(true);
-                tableCust.setTotalWidth(document.right() - document.left());
-                
-                PdfPCell cell11 = new PdfPCell(new Phrase(name, rectemja));
-                cell11.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell11.setBorder(Rectangle.NO_BORDER);
-                cell11.setColspan(3);
-                
-                PdfPCell cell21 = new PdfPCell(new Phrase(address, rectemja));
-                cell21.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell21.setBorder(Rectangle.NO_BORDER);
-                cell21.setColspan(3);
-                
-                PdfPCell cell31 = new PdfPCell(new Phrase("\n" + strDate + "\n\n", rectemja));
-                cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell31.setBorder(Rectangle.NO_BORDER);
-                cell31.setColspan(3);
-                
-                tableCust.addCell(cell11);
-                tableCust.addCell(cell21);
-                tableCust.addCell(cell31);
-                
-                //Summary
-                PdfPTable tableSummary = new PdfPTable(2);
-                tableSummary.setWidths(new float[]{10.5f, 4f});
-                tableSummary.setLockedWidth(true);
-                tableSummary.setTotalWidth(document.right() - document.left());
-                
-                PdfPCell cell41 = new PdfPCell(new Phrase("Total Debit of "+ month +" (RM)", rectem));
-                cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell41.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell42 = new PdfPCell(new Phrase(debit, rectemja));
-                cell42.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cell42.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell51 = new PdfPCell(new Phrase("Total Credit of "+ month +" (RM)", rectem));
-                cell51.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cell51.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell52 = new PdfPCell(new Phrase(credit + "\n\n", rectemja));
-                cell52.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                cell52.setBorder(Rectangle.NO_BORDER);
-                
-                tableSummary.addCell(cell41);
-                tableSummary.addCell(cell42);
-                tableSummary.addCell(cell51);
-                tableSummary.addCell(cell52);
-                
-                PdfPTable tableStatement = new PdfPTable(3);
-                tableStatement.setWidths(new float[]{2f, 10f, 2f});
-                tableStatement.setLockedWidth(true);
-                tableStatement.setTotalWidth(document.right() - document.left());
-                
-                PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
-                cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
-                PdfPCell cell62 = new PdfPCell(new Phrase("Description", rectem));
-                cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
-                PdfPCell cell63 = new PdfPCell(new Phrase("Amount (RM)", rectem));
-                cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
-                
-                tableStatement.addCell(cell61);
-                tableStatement.addCell(cell62);
-                tableStatement.addCell(cell63);
-                
-                for(int i = 0; i < dataBill.size(); i++){
-                    String dateHdr = dataBill.get(i).get(0);
-                    String billNo = dataBill.get(i).get(1);
-                    String billAmt = dataBill.get(i).get(2);
-
-                    String sql3 = "SELECT "
-                            + "txn_date, item_desc, quantity, item_amt "
-                            + "FROM far_customer_dtl "
-                            + "WHERE bill_no = '"+ billNo +"'";
-                    ArrayList<ArrayList<String>> dataItem = rc.getQuerySQL(host, port, sql3);
-
-                    PdfPCell cell71 = new PdfPCell(new Phrase(dateHdr, rectem));
-                    cell71.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    PdfPCell cell72 = new PdfPCell(new Phrase(billNo + "(Bill No)", rectem));
-                    cell72.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    PdfPCell cell73 = new PdfPCell(new Phrase(billAmt, rectem));
-                    cell73.setHorizontalAlignment(Element.ALIGN_CENTER);
-
-                    tableStatement.addCell(cell71);
-                    tableStatement.addCell(cell72);
-                    tableStatement.addCell(cell73);
-                    
-                    for(int j = 0; j < dataItem.size(); j++){
-                        String dateDtl = dataItem.get(j).get(0);
-                        String itemName = dataItem.get(j).get(1);
-                        String itemQty = dataItem.get(j).get(2);
-                        String itemAmt = dataItem.get(j).get(3);
-                        
-                        PdfPTable tableItems = new PdfPTable(4);
-                        tableItems.setWidths(new float[]{2f, 8f, 2f, 2f});
-                        tableItems.setLockedWidth(true);
-                        tableItems.setTotalWidth(document.right() - document.left());
-                        
-                        PdfPCell cell81 = new PdfPCell(new Phrase(dateDtl, rectem));
-                        cell81.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        PdfPCell cell82 = new PdfPCell(new Phrase(itemName, rectem));
-                        cell82.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        PdfPCell cell83 = new PdfPCell(new Phrase(itemQty, rectem));
-                        cell83.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        PdfPCell cell84 = new PdfPCell(new Phrase(itemAmt, rectem));
-                        cell84.setHorizontalAlignment(Element.ALIGN_CENTER);
-
-                        tableItems.addCell(cell81);
-                        tableItems.addCell(cell82);
-                        tableItems.addCell(cell83);
-                        tableItems.addCell(cell84);
-                    }
-                    
-                    PdfPTable tableFooter = new PdfPTable(1);
-                    tableFooter.setWidths(new float[]{10.5f});
-                    tableFooter.setLockedWidth(true);
-                    tableFooter.setTotalWidth(document.right() - document.left());
-
-                    String message1 = "****Thank You****";
-                    String message2 = "Please Come Again";
-                    PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
-                    cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellFooter1.setBorder(Rectangle.TOP);
-                    PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
-                    cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellFooter2.setBorder(Rectangle.NO_BORDER);
-
-                    tableFooter.addCell(cellFooter1);
-                    tableFooter.addCell(cellFooter2);
-                    
-                    document.add(tableHeader);
-                    document.add(tableCust);
-                    document.add(tableSummary);
-                    document.add(tableStatement);
-                    document.add(tableFooter);
-                    document.close();
-                    writer.close();
-               }   
-            } catch (Exception e) {
-            }
-        } else {
-            //Print all month
-            //create new document
-            Document document = new Document(PageSize.A4, 36, 36, 64, 36) {}; 
-            document.setMargins(40, 30, 50, 50); 
-            
-            try {
-                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("MonthlyStatement.pdf"));
-                document.open();
-                
-                strMonth = new String[]{"January", "February", "March", "April", "May", "June", 
-                                    "July", "August", "September", "October", "November", "December"};
-                
-                for(int k = 0; k < strMonth.length; k++){
-                    String[] monthDetails = Month.selectedMonth(strMonth[k]);
-                    String dr = monthDetails[0]; 
-                    String cr = monthDetails[1];
-                    String period = monthDetails[2];
-                    
-                    String sql1 = "SELECT "
-                            + "pb.pmi_no, pb.patient_name, pb.id_no, pb.home_address, pb.mobile_phone, pb.email_address, "
-                            + "cl."+ dr +", cl."+ cr +" "
-                            + "FROM pms_patient_biodata pb, far_customer_ledger cl "
-                            + "WHERE pb.pmi_no = cl.customer_id "
-                            + "AND pb.new_ic_no = '"+ ic +"'";
-                    ArrayList<ArrayList<String>> dataPatient = rc.getQuerySQL(host, port, sql1);
-
-                    String pmiNo = dataPatient.get(0).get(0);
-                    String name = dataPatient.get(0).get(1);
-                    String id = dataPatient.get(0).get(2);
-                    String address = dataPatient.get(0).get(3);
-                    String phone = dataPatient.get(0).get(4);
-                    String email = dataPatient.get(0).get(5);
-                    String debit = dataPatient.get(0).get(6);
-                    String credit = dataPatient.get(0).get(7);
-
-                    String sql2 = "SELECT "
-                            + "ch.txn_date, ch.bill_no, ch.item_amt "
-                            + "FROM far_customer_hdr ch, pms_patient_biodata pb "
-                            + "WHERE ch.customer_id = pb.pmi_no "
-                            + "AND ch.customer_id = '"+ ic +"' "
-                            + "AND ch.txn_date LIKE %'"+ period +"'% "
-                            + "ORDER BY ch.txn_date, ch.bill_no";
-                    ArrayList<ArrayList<String>> dataBill = rc.getQuerySQL(host, port, sql2);
-                    
                     //initialize pdf
                     Font recno = new Font(Font.TIMES_ROMAN, 10);
                     Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
@@ -792,7 +537,298 @@ public class Report {
                     cellAddress.setColspan(2);
                     tableHeader.addCell(cellAddress);
 
-                    PdfPCell cellAnnual = new PdfPCell(new Phrase("\n"+ strMonth[k] +" Account Statement\n\n", recti));
+                    PdfPCell cellAnnual = new PdfPCell(new Phrase("\nDetails Account Statement\n\n", recti));
+                    cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellAnnual.setBorder(Rectangle.NO_BORDER);
+                    cellAnnual.setColspan(4);
+                    tableHeader.addCell(cellAnnual);                
+
+                    //Customer Details
+                    PdfPTable tableCust = new PdfPTable(1);
+                    tableCust.setWidths(new float[]{10f});
+                    tableCust.setLockedWidth(true);
+                    tableCust.setTotalWidth(document.right() - document.left());
+
+                    PdfPCell cell11 = new PdfPCell(new Phrase(name, rectemja));
+                    cell11.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell11.setBorder(Rectangle.NO_BORDER);
+                    cell11.setColspan(3);
+
+                    PdfPCell cell21 = new PdfPCell(new Phrase(address, rectemja));
+                    cell21.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell21.setBorder(Rectangle.NO_BORDER);
+                    cell21.setColspan(3);
+
+                    PdfPCell cell31 = new PdfPCell(new Phrase("\n" + strDate + "\n\n", rectemja));
+                    cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell31.setBorder(Rectangle.NO_BORDER);
+                    cell31.setColspan(3);
+
+                    tableCust.addCell(cell11);
+                    tableCust.addCell(cell21);
+                    tableCust.addCell(cell31);
+                    
+                    PdfPTable tableTitle = new PdfPTable(4);
+                    tableTitle.setWidths(new float[]{5f, 6f, 2f, 2f});
+                    tableTitle.setLockedWidth(true);
+                    tableTitle.setTotalWidth(document.right() - document.left());
+
+                    PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
+                    cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    PdfPCell cell62 = new PdfPCell(new Phrase("Bill Number", rectem));
+                    cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    PdfPCell cell63 = new PdfPCell(new Phrase("Debit (RM)", rectem));
+                    cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    PdfPCell cell64 = new PdfPCell(new Phrase("Credit (RM)", rectem));
+                    cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    
+                    tableTitle.addCell(cell61);
+                    tableTitle.addCell(cell62);
+                    tableTitle.addCell(cell63);
+                    tableTitle.addCell(cell64);
+                    
+                    document.add(tableHeader);
+                    document.add(tableCust);
+                    document.add(tableTitle);
+                    
+                    double totalDebit = 0;
+                    double totalCredit = 0;
+                    String[] arrMonth = new String[]{"January", "February", "March", "April", "May", "June", 
+                                        "July", "August", "September", "October", "November", "December"};
+                    for(int i = 0; i < Integer.parseInt(strMon); i++){
+                        String[] monthDetails = Month.selectedMonth(arrMonth[i]);
+                        String dr = monthDetails[0];
+                        String cr = monthDetails[1];
+                        String period = monthDetails[2];
+                        String sql2 = "SELECT "
+                                + "cl."+ dr +", cl."+ cr +", cl.customer_id "
+                                + "FROM far_customer_ledger cl, pms_patient_biodata pb "
+                                + "WHERE cl.customer_id = pb.pmi_no "
+                                + "AND pb.new_ic_no = '"+ ic +"'";
+                        ArrayList<ArrayList<String>> dataLedger = rc.getQuerySQL(host, port, sql2);
+
+                        String debit = dataLedger.get(0).get(0);
+                        String credit = dataLedger.get(0).get(1);
+                        String custId = dataLedger.get(0).get(2);
+                        if(debit == null)
+                            debit = "0.00";
+                        if(credit == null)
+                            credit = "0.00";
+                        
+                        totalDebit += Double.parseDouble(debit);
+                        totalCredit += Double.parseDouble(credit);
+                        
+                        PdfPTable tableMonth = new PdfPTable(4);
+                        tableMonth.setWidths(new float[]{5f, 6f, 2f, 2f});
+                        tableMonth.setLockedWidth(true);
+                        tableMonth.setTotalWidth(document.right() - document.left());
+                        
+                        PdfPCell cell71 = new PdfPCell(new Phrase(arrMonth[i], rectem));
+                        cell71.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell71.setBorder(Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.TOP);
+                        PdfPCell cell72 = new PdfPCell(new Phrase("", rectem));
+                        cell72.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cell72.setBorder(Rectangle.RIGHT | Rectangle.BOTTOM | Rectangle.TOP);
+                        PdfPCell cell73 = new PdfPCell(new Phrase(debit, rectem));
+                        cell73.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        PdfPCell cell74 = new PdfPCell(new Phrase(credit, rectem));
+                        cell74.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        
+                        tableMonth.addCell(cell71);
+                        tableMonth.addCell(cell72);
+                        tableMonth.addCell(cell73);
+                        tableMonth.addCell(cell74);
+                        
+                        document.add(tableMonth);
+
+                        String sql3 = "SELECT "
+                                + "ch.txn_date, ch.bill_no, ch.item_amt "
+                                + "FROM far_customer_hdr ch, far_customer_ledger cl "
+                                + "WHERE ch.customer_id = cl.customer_id "
+                                + "AND cl.customer_id = '"+ custId +"' "
+                                + "AND ch.txn_date LIKE '%"+ period +"%' "
+                                + "ORDER by ch.txn_date";
+                        ArrayList<ArrayList<String>> dataHdr = rc.getQuerySQL(host, port, sql3);
+
+                        for(int j = 0; j < dataHdr.size(); j++){
+                            String dateHdr = dataHdr.get(j).get(0);
+                            String billNo = dataHdr.get(j).get(1);
+                            String billAmt = dataHdr.get(j).get(2);
+                            
+                            PdfPTable tableBill = new PdfPTable(4);
+                            tableBill.setWidths(new float[]{5f, 6f, 2f, 2f});
+                            tableBill.setLockedWidth(true);
+                            tableBill.setTotalWidth(document.right() - document.left());
+                            
+                            PdfPCell cell81 = new PdfPCell(new Phrase(dateHdr, rectemja));
+                            cell81.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            PdfPCell cell82 = new PdfPCell(new Phrase(billNo, rectemja));
+                            cell82.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            PdfPCell cell83 = new PdfPCell(new Phrase(billAmt, rectemja));
+                            cell83.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            PdfPCell cell84 = new PdfPCell(new Phrase("", rectemja));
+                            cell84.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                            tableBill.addCell(cell81);
+                            tableBill.addCell(cell82);
+                            tableBill.addCell(cell83);
+                            tableBill.addCell(cell84);
+
+                            document.add(tableBill);
+                        }
+                    }
+                    
+                    //Summary
+                    PdfPTable tableSummary = new PdfPTable(2);
+                    tableSummary.setWidths(new float[]{10.5f, 4f});
+                    tableSummary.setLockedWidth(true);
+                    tableSummary.setTotalWidth(document.right() - document.left());
+
+                    PdfPCell cell41 = new PdfPCell(new Phrase("\nTotal Debit of "+ arrMonth[0] +" to "
+                            + arrMonth[Integer.parseInt(strMon)] +" (RM)", rectem));
+                    cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell41.setBorder(Rectangle.NO_BORDER);
+                    PdfPCell cell42 = new PdfPCell(new Phrase("\n"+ df.format(totalDebit), rectemja));
+                    cell42.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell42.setBorder(Rectangle.NO_BORDER);
+                    
+                    PdfPCell cell51 = new PdfPCell(new Phrase("Total Credit of "+ arrMonth[0] +" to "
+                            + arrMonth[Integer.parseInt(strMon)] +" (RM)", rectem));
+                    cell51.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cell51.setBorder(Rectangle.NO_BORDER);
+                    PdfPCell cell52 = new PdfPCell(new Phrase(df.format(totalCredit) + "\n\n", rectemja));
+                    cell52.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cell52.setBorder(Rectangle.NO_BORDER);
+                    
+                    tableSummary.addCell(cell41);
+                    tableSummary.addCell(cell42);
+                    tableSummary.addCell(cell51);
+                    tableSummary.addCell(cell52);
+                    
+                    PdfPTable tableFooter = new PdfPTable(1);
+                    tableFooter.setWidths(new float[]{10.5f});
+                    tableFooter.setLockedWidth(true);
+                    tableFooter.setTotalWidth(document.right() - document.left());
+
+                    PdfPCell cellFooter0 = new PdfPCell(new Phrase("", rectemja));
+                    cellFooter0.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellFooter0.setBorder(Rectangle.NO_BORDER);
+                    String message1 = "****Thank You****";
+                    String message2 = "Please Come Again";
+                    PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
+                    cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellFooter1.setBorder(Rectangle.TOP);
+                    PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
+                    cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellFooter2.setBorder(Rectangle.NO_BORDER);
+
+                    tableFooter.addCell(cellFooter0);
+                    tableFooter.addCell(cellFooter1);
+                    tableFooter.addCell(cellFooter2);
+
+                    document.add(tableSummary);
+                    document.add(tableFooter);
+                    document.close();
+                    writer.close();
+                    Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
+                    
+                } catch(Exception e){
+                }
+            } else {
+                String infoMessage = "Record not found.\nPlease recheck the IC number";
+                JOptionPane.showMessageDialog(null, infoMessage, "Not found", JOptionPane.WARNING_MESSAGE);
+            }
+    }
+    
+    public void generateMonthlyStatement(String ic, String month){
+        String[] strMonth = Month.selectedMonth(month);
+        
+        if (strMonth != null){
+            String dr = strMonth[0]; 
+            String cr = strMonth[1];
+            String period = strMonth[2];
+            
+            String sql1 = "SELECT "
+                    + "pb.pmi_no, pb.patient_name, pb.id_no, pb.home_address, pb.mobile_phone, pb.email_address, "
+                    + "cl."+ dr +", cl."+ cr +" "
+                    + "FROM pms_patient_biodata pb, far_customer_ledger cl "
+                    + "WHERE pb.pmi_no = cl.customer_id "
+                    + "AND pb.new_ic_no = '"+ ic +"'";
+            ArrayList<ArrayList<String>> dataPatient = rc.getQuerySQL(host, port, sql1);
+            
+            if(!dataPatient.isEmpty()){
+                String pmiNo = dataPatient.get(0).get(0);
+                String name = dataPatient.get(0).get(1);
+                String id = dataPatient.get(0).get(2);
+                String address = dataPatient.get(0).get(3);
+                String phone = dataPatient.get(0).get(4);
+                String email = dataPatient.get(0).get(5);
+                String debit = dataPatient.get(0).get(6);
+                String credit = dataPatient.get(0).get(7);
+                if (debit == null)
+                    debit = "0.00";
+                if (credit == null)
+                    credit = "0.00";
+                
+                String sql2 = "SELECT "
+                        + "ch.txn_date, ch.bill_no, ch.item_amt "
+                        + "FROM far_customer_hdr ch, pms_patient_biodata pb "
+                        + "WHERE ch.customer_id = pb.pmi_no "
+                        + "AND pb.new_ic_no = '"+ ic +"' "
+                        + "AND ch.txn_date LIKE '%"+ period +"%' "
+                        + "ORDER BY ch.txn_date, ch.bill_no";
+                ArrayList<ArrayList<String>> dataBill = rc.getQuerySQL(host, port, sql2);
+
+                //create new document
+                Document document = new Document(PageSize.A4, 36, 36, 64, 36) {}; 
+                document.setMargins(40, 30, 50, 50); 
+
+                try {
+                    PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("DetailsStatement.pdf"));
+                    document.open();
+
+                    //initialize pdf
+                    Font recno = new Font(Font.TIMES_ROMAN, 10);
+                    Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
+                    Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
+                    Font rectemja = new Font(Font.COURIER, 12);
+                    Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
+                    Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
+
+                    //header
+                    PdfPTable table = new PdfPTable(6);
+                    table.setWidths(new float[]{0.5f, 1.5f, 4f, 1.5f, 1.5f, 1.5f});
+                    table.setLockedWidth(true);
+                    table.setTotalWidth(document.right() - document.left());
+
+                    PdfPTable tableHeader = new PdfPTable(4);
+                    tableHeader.setWidths(new float[]{3f, 4f, 3.5f, 4f});
+                    tableHeader.setLockedWidth(true);
+                    tableHeader.setTotalWidth(document.right() - document.left());
+
+                    Image logo = Image.getInstance("pic/logo.png");
+                    logo.scaleAbsolute(115, 50);
+
+                    PdfPCell cellLogo = new PdfPCell(logo);
+                    cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cellLogo.setBorder(Rectangle.NO_BORDER);
+                    cellLogo.setColspan(2);
+                    cellLogo.setLeading(15f, 0.3f);
+                    tableHeader.addCell(cellLogo);
+
+                    String addr = 
+                            " Universiti Teknikal Malaysia Melaka, \n"
+                            + " Hang Tuah Jaya, \n"
+                            + " 76100 Durian Tunggal, \n"
+                            + " Melaka, Malaysia.";
+
+                    PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
+                    cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    cellAddress.setBorder(Rectangle.NO_BORDER);
+                    cellAddress.setColspan(2);
+                    tableHeader.addCell(cellAddress);
+
+                    PdfPCell cellAnnual = new PdfPCell(new Phrase("\n"+ month +" Account Statement\n\n", recti));
                     cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellAnnual.setBorder(Rectangle.NO_BORDER);
                     cellAnnual.setColspan(4);
@@ -832,13 +868,13 @@ public class Report {
                     PdfPCell cell41 = new PdfPCell(new Phrase("Total Debit of "+ month +" (RM)", rectem));
                     cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell41.setBorder(Rectangle.NO_BORDER);
-                    PdfPCell cell42 = new PdfPCell(new Phrase(debit, rectemja));
+                    PdfPCell cell42 = new PdfPCell(new Phrase(df.format(Double.parseDouble(debit)), rectemja));
                     cell42.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell42.setBorder(Rectangle.NO_BORDER);
                     PdfPCell cell51 = new PdfPCell(new Phrase("Total Credit of "+ month +" (RM)", rectem));
                     cell51.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell51.setBorder(Rectangle.NO_BORDER);
-                    PdfPCell cell52 = new PdfPCell(new Phrase(credit + "\n\n", rectemja));
+                    PdfPCell cell52 = new PdfPCell(new Phrase(df.format(Double.parseDouble(credit)) + "\n\n", rectemja));
                     cell52.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell52.setBorder(Rectangle.NO_BORDER);
 
@@ -846,11 +882,11 @@ public class Report {
                     tableSummary.addCell(cell42);
                     tableSummary.addCell(cell51);
                     tableSummary.addCell(cell52);
-
-                    PdfPTable tableStatement = new PdfPTable(3);
-                    tableStatement.setWidths(new float[]{2f, 10f, 2f});
-                    tableStatement.setLockedWidth(true);
-                    tableStatement.setTotalWidth(document.right() - document.left());
+                    
+                    PdfPTable tableTitle = new PdfPTable(3);
+                    tableTitle.setWidths(new float[]{3f, 10f, 2f});
+                    tableTitle.setLockedWidth(true);
+                    tableTitle.setTotalWidth(document.right() - document.left());
 
                     PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
                     cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -859,9 +895,14 @@ public class Report {
                     PdfPCell cell63 = new PdfPCell(new Phrase("Amount (RM)", rectem));
                     cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-                    tableStatement.addCell(cell61);
-                    tableStatement.addCell(cell62);
-                    tableStatement.addCell(cell63);
+                    tableTitle.addCell(cell61);
+                    tableTitle.addCell(cell62);
+                    tableTitle.addCell(cell63);
+                                        
+                    document.add(tableHeader);
+                    document.add(tableCust);
+                    document.add(tableSummary);
+                    document.add(tableTitle);
 
                     for(int i = 0; i < dataBill.size(); i++){
                         String dateHdr = dataBill.get(i).get(0);
@@ -873,49 +914,327 @@ public class Report {
                                 + "FROM far_customer_dtl "
                                 + "WHERE bill_no = '"+ billNo +"'";
                         ArrayList<ArrayList<String>> dataItem = rc.getQuerySQL(host, port, sql3);
+                        
+                        PdfPTable tableBill = new PdfPTable(3);
+                        tableBill.setWidths(new float[]{3f, 10f, 2f});
+                        tableBill.setLockedWidth(true);
+                        tableBill.setTotalWidth(document.right() - document.left());
 
-                        PdfPCell cell71 = new PdfPCell(new Phrase(dateHdr, rectem));
+                        PdfPCell cell71 = new PdfPCell(new Phrase(dateHdr, rectemja));
                         cell71.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        PdfPCell cell72 = new PdfPCell(new Phrase(billNo + "(Bill No)", rectem));
-                        cell72.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        PdfPCell cell73 = new PdfPCell(new Phrase(billAmt, rectem));
+                        PdfPCell cell72 = new PdfPCell(new Phrase(billNo + " (Bill No)", rectemja));
+                        cell72.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        PdfPCell cell73 = new PdfPCell(new Phrase(billAmt, rectemja));
                         cell73.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-                        tableStatement.addCell(cell71);
-                        tableStatement.addCell(cell72);
-                        tableStatement.addCell(cell73);
-
+                        tableBill.addCell(cell71);
+                        tableBill.addCell(cell72);
+                        tableBill.addCell(cell73);
+                        
+                        document.add(tableBill);
+                        
                         for(int j = 0; j < dataItem.size(); j++){
                             String dateDtl = dataItem.get(j).get(0);
                             String itemName = dataItem.get(j).get(1);
                             String itemQty = dataItem.get(j).get(2);
                             String itemAmt = dataItem.get(j).get(3);
-
+                            
                             PdfPTable tableItems = new PdfPTable(4);
-                            tableItems.setWidths(new float[]{2f, 8f, 2f, 2f});
+                            tableItems.setWidths(new float[]{3f, 9f, 1f, 2f});
                             tableItems.setLockedWidth(true);
                             tableItems.setTotalWidth(document.right() - document.left());
 
-                            PdfPCell cell81 = new PdfPCell(new Phrase(dateDtl, rectem));
+                            PdfPCell cell81 = new PdfPCell(new Phrase("", rectemja));
                             cell81.setHorizontalAlignment(Element.ALIGN_LEFT);
-                            PdfPCell cell82 = new PdfPCell(new Phrase(itemName, rectem));
+                            cell81.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                            PdfPCell cell82 = new PdfPCell(new Phrase(itemName, rectemja));
                             cell82.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            PdfPCell cell83 = new PdfPCell(new Phrase(itemQty, rectem));
+                            cell82.setBorder(Rectangle.NO_BORDER);
+                            PdfPCell cell83 = new PdfPCell(new Phrase(itemQty, rectemja));
                             cell83.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            PdfPCell cell84 = new PdfPCell(new Phrase(itemAmt, rectem));
+                            cell83.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                            PdfPCell cell84 = new PdfPCell(new Phrase(itemAmt, rectemja));
                             cell84.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            cell84.setBorder(Rectangle.RIGHT);
 
                             tableItems.addCell(cell81);
                             tableItems.addCell(cell82);
                             tableItems.addCell(cell83);
                             tableItems.addCell(cell84);
+                            
+                            document.add(tableItems);
                         }
+                    }
+                    
+                    PdfPTable tableFooter = new PdfPTable(1);
+                    tableFooter.setWidths(new float[]{10.5f});
+                    tableFooter.setLockedWidth(true);
+                    tableFooter.setTotalWidth(document.right() - document.left());
+                    
+                    PdfPCell cellFooter0 = new PdfPCell(new Phrase("", rectemja));
+                    cellFooter0.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellFooter0.setBorder(Rectangle.NO_BORDER);
+                    String message1 = "****Thank You****";
+                    String message2 = "Please Come Again";
+                    PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
+                    cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellFooter1.setBorder(Rectangle.TOP);
+                    PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
+                    cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellFooter2.setBorder(Rectangle.NO_BORDER);
+
+                    tableFooter.addCell(cellFooter0);
+                    tableFooter.addCell(cellFooter1);
+                    tableFooter.addCell(cellFooter2);
+
+                    document.add(tableFooter);
+                    document.close();
+                    writer.close();
+                    Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
+                    
+                } catch (Exception e) {
+                }
+            } else {
+                String infoMessage = "Record not found.\nPlease recheck the IC number";
+                JOptionPane.showMessageDialog(null, infoMessage, "Not found", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            //Print all month
+            //create new document
+            Document document = new Document(PageSize.A4, 36, 36, 64, 36) {}; 
+            document.setMargins(40, 30, 50, 50); 
+
+            try {
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("MonthlyStatement.pdf"));
+                document.open();
+
+                strMonth = new String[]{"January", "February", "March", "April", "May", "June", 
+                                    "July", "August", "September", "October", "November", "December"};
+
+                for(int k = 0; k < strMonth.length; k++){
+                    String[] monthDetails = Month.selectedMonth(strMonth[k]);
+                    String dr = monthDetails[0]; 
+                    String cr = monthDetails[1];
+                    String period = monthDetails[2];
+
+                    String sql1 = "SELECT "
+                            + "pb.pmi_no, pb.patient_name, pb.id_no, pb.home_address, pb.mobile_phone, pb.email_address, "
+                            + "cl."+ dr +", cl."+ cr +" "
+                            + "FROM pms_patient_biodata pb, far_customer_ledger cl "
+                            + "WHERE pb.pmi_no = cl.customer_id "
+                            + "AND pb.new_ic_no = '"+ ic +"'";
+                    ArrayList<ArrayList<String>> dataPatient = rc.getQuerySQL(host, port, sql1);
+
+                    if (!dataPatient.isEmpty()){
+                        String pmiNo = dataPatient.get(0).get(0);
+                        String name = dataPatient.get(0).get(1);
+                        String id = dataPatient.get(0).get(2);
+                        String address = dataPatient.get(0).get(3);
+                        String phone = dataPatient.get(0).get(4);
+                        String email = dataPatient.get(0).get(5);
+                        String debit = dataPatient.get(0).get(6);
+                        String credit = dataPatient.get(0).get(7);
+                        if (debit == null)
+                            debit = "0.00";
+                        if (credit == null)
+                            credit = "0.00";
+
+                        String sql2 = "SELECT "
+                                + "ch.txn_date, ch.bill_no, ch.item_amt "
+                                + "FROM far_customer_hdr ch, pms_patient_biodata pb "
+                                + "WHERE ch.customer_id = pb.pmi_no "
+                                + "AND pb.new_ic_no = '"+ ic +"' "
+                                + "AND ch.txn_date LIKE '%"+ period +"%' "
+                                + "ORDER BY ch.txn_date, ch.bill_no";
+                        ArrayList<ArrayList<String>> dataBill = rc.getQuerySQL(host, port, sql2);
+
+                        //initialize pdf
+                        Font recno = new Font(Font.TIMES_ROMAN, 10);
+                        Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
+                        Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
+                        Font rectemja = new Font(Font.COURIER, 12);
+                        Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
+                        Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
+
+                        //header
+                        PdfPTable table = new PdfPTable(6);
+                        table.setWidths(new float[]{0.5f, 1.5f, 4f, 1.5f, 1.5f, 1.5f});
+                        table.setLockedWidth(true);
+                        table.setTotalWidth(document.right() - document.left());
+
+                        PdfPTable tableHeader = new PdfPTable(4);
+                        tableHeader.setWidths(new float[]{3f, 4f, 3.5f, 4f});
+                        tableHeader.setLockedWidth(true);
+                        tableHeader.setTotalWidth(document.right() - document.left());
+
+                        Image logo = Image.getInstance("pic/logo.png");
+                        logo.scaleAbsolute(115, 50);
+
+                        PdfPCell cellLogo = new PdfPCell(logo);
+                        cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cellLogo.setBorder(Rectangle.NO_BORDER);
+                        cellLogo.setColspan(2);
+                        cellLogo.setLeading(15f, 0.3f);
+                        tableHeader.addCell(cellLogo);
+
+                        String addr = 
+                                " Universiti Teknikal Malaysia Melaka, \n"
+                                + " Hang Tuah Jaya, \n"
+                                + " 76100 Durian Tunggal, \n"
+                                + " Melaka, Malaysia.";
+
+                        PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
+                        cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cellAddress.setBorder(Rectangle.NO_BORDER);
+                        cellAddress.setColspan(2);
+                        tableHeader.addCell(cellAddress);
+
+                        PdfPCell cellAnnual = new PdfPCell(new Phrase("\n"+ strMonth[k] +" Account Statement\n\n", recti));
+                        cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellAnnual.setBorder(Rectangle.NO_BORDER);
+                        cellAnnual.setColspan(4);
+                        tableHeader.addCell(cellAnnual);                
+
+                        //Customer Details
+                        PdfPTable tableCust = new PdfPTable(1);
+                        tableCust.setWidths(new float[]{10f});
+                        tableCust.setLockedWidth(true);
+                        tableCust.setTotalWidth(document.right() - document.left());
+
+                        PdfPCell cell11 = new PdfPCell(new Phrase(name, rectemja));
+                        cell11.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell11.setBorder(Rectangle.NO_BORDER);
+                        cell11.setColspan(3);
+
+                        PdfPCell cell21 = new PdfPCell(new Phrase(address, rectemja));
+                        cell21.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell21.setBorder(Rectangle.NO_BORDER);
+                        cell21.setColspan(3);
+
+                        PdfPCell cell31 = new PdfPCell(new Phrase("\n" + strDate + "\n\n", rectemja));
+                        cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell31.setBorder(Rectangle.NO_BORDER);
+                        cell31.setColspan(3);
+
+                        tableCust.addCell(cell11);
+                        tableCust.addCell(cell21);
+                        tableCust.addCell(cell31);
+
+                        //Summary
+                        PdfPTable tableSummary = new PdfPTable(2);
+                        tableSummary.setWidths(new float[]{10.5f, 4f});
+                        tableSummary.setLockedWidth(true);
+                        tableSummary.setTotalWidth(document.right() - document.left());
+
+                        PdfPCell cell41 = new PdfPCell(new Phrase("Total Debit of "+ strMonth[k] +" (RM)", rectem));
+                        cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell41.setBorder(Rectangle.NO_BORDER);
+                        PdfPCell cell42 = new PdfPCell(new Phrase(df.format(Double.parseDouble(debit)), rectemja));
+                        cell42.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell42.setBorder(Rectangle.NO_BORDER);
+                        PdfPCell cell51 = new PdfPCell(new Phrase("Total Credit of "+ strMonth[k] +" (RM)", rectem));
+                        cell51.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        cell51.setBorder(Rectangle.NO_BORDER);
+                        PdfPCell cell52 = new PdfPCell(new Phrase(df.format(Double.parseDouble(credit)) + "\n\n", rectemja));
+                        cell52.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cell52.setBorder(Rectangle.NO_BORDER);
+
+                        tableSummary.addCell(cell41);
+                        tableSummary.addCell(cell42);
+                        tableSummary.addCell(cell51);
+                        tableSummary.addCell(cell52);
+
+                        PdfPTable tableTitle = new PdfPTable(3);
+                        tableTitle.setWidths(new float[]{3f, 10f, 2f});
+                        tableTitle.setLockedWidth(true);
+                        tableTitle.setTotalWidth(document.right() - document.left());
+
+                        PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
+                        cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
+                        PdfPCell cell62 = new PdfPCell(new Phrase("Description", rectem));
+                        cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        PdfPCell cell63 = new PdfPCell(new Phrase("Amount (RM)", rectem));
+                        cell63.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                        tableTitle.addCell(cell61);
+                        tableTitle.addCell(cell62);
+                        tableTitle.addCell(cell63);
+
+                        document.add(tableHeader);
+                        document.add(tableCust);
+                        document.add(tableSummary);
+                        document.add(tableTitle);
+
+                        for(int i = 0; i < dataBill.size(); i++){
+                            String dateHdr = dataBill.get(i).get(0);
+                            String billNo = dataBill.get(i).get(1);
+                            String billAmt = dataBill.get(i).get(2);
+
+                            String sql3 = "SELECT "
+                                    + "txn_date, item_desc, quantity, item_amt "
+                                    + "FROM far_customer_dtl "
+                                    + "WHERE bill_no = '"+ billNo +"'";
+                            ArrayList<ArrayList<String>> dataItem = rc.getQuerySQL(host, port, sql3);
+
+                            PdfPTable tableBill = new PdfPTable(3);
+                            tableBill.setWidths(new float[]{3f, 10f, 2f});
+                            tableBill.setLockedWidth(true);
+                            tableBill.setTotalWidth(document.right() - document.left());
+
+                            PdfPCell cell71 = new PdfPCell(new Phrase(dateHdr, rectemja));
+                            cell71.setHorizontalAlignment(Element.ALIGN_LEFT);  
+                            PdfPCell cell72 = new PdfPCell(new Phrase(billNo + " (Bill No)", rectemja));
+                            cell72.setHorizontalAlignment(Element.ALIGN_LEFT);
+                            PdfPCell cell73 = new PdfPCell(new Phrase(billAmt, rectemja));
+                            cell73.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                            tableBill.addCell(cell71);
+                            tableBill.addCell(cell72);
+                            tableBill.addCell(cell73);
+
+                            document.add(tableBill);
+
+                            for(int j = 0; j < dataItem.size(); j++){
+                                String dateDtl = dataItem.get(j).get(0);
+                                String itemName = dataItem.get(j).get(1);
+                                String itemQty = dataItem.get(j).get(2);
+                                String itemAmt = dataItem.get(j).get(3);
+
+                                PdfPTable tableItems = new PdfPTable(4);
+                                tableItems.setWidths(new float[]{3f, 9f, 1f, 2f});
+                                tableItems.setLockedWidth(true);
+                                tableItems.setTotalWidth(document.right() - document.left());
+
+                                PdfPCell cell81 = new PdfPCell(new Phrase("", rectemja));
+                                cell81.setHorizontalAlignment(Element.ALIGN_LEFT);
+                                cell81.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                                PdfPCell cell82 = new PdfPCell(new Phrase(itemName, rectemja));
+                                cell82.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell82.setBorder(Rectangle.NO_BORDER);
+                                PdfPCell cell83 = new PdfPCell(new Phrase(itemQty, rectemja));
+                                cell83.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell83.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                                PdfPCell cell84 = new PdfPCell(new Phrase(itemAmt, rectemja));
+                                cell84.setHorizontalAlignment(Element.ALIGN_CENTER);
+                                cell84.setBorder(Rectangle.RIGHT);
+
+                                tableItems.addCell(cell81);
+                                tableItems.addCell(cell82);
+                                tableItems.addCell(cell83);
+                                tableItems.addCell(cell84);
+
+                                document.add(tableItems);
+                            }
+                       }   
 
                         PdfPTable tableFooter = new PdfPTable(1);
                         tableFooter.setWidths(new float[]{10.5f});
                         tableFooter.setLockedWidth(true);
                         tableFooter.setTotalWidth(document.right() - document.left());
 
+                        PdfPCell cellFooter0 = new PdfPCell(new Phrase("", rectemja));
+                        cellFooter0.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellFooter0.setBorder(Rectangle.NO_BORDER);
                         String message1 = "****Thank You****";
                         String message2 = "Please Come Again";
                         PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
@@ -925,22 +1244,22 @@ public class Report {
                         cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cellFooter2.setBorder(Rectangle.NO_BORDER);
 
+                        tableFooter.addCell(cellFooter0);
                         tableFooter.addCell(cellFooter1);
                         tableFooter.addCell(cellFooter2);
 
-                        document.add(tableHeader);
-                        document.add(tableCust);
-                        document.add(tableSummary);
-                        document.add(tableStatement);
                         document.add(tableFooter);
                         document.newPage();
+
+                        } else {
+                            String infoMessage = "Record not found.\nPlease recheck the IC number";
+                            JOptionPane.showMessageDialog(null, infoMessage, "Not found", JOptionPane.WARNING_MESSAGE);
+                            break;
+                        }
                     }
-                 }
-                
-                //close document
                 document.close();
                 writer.close();
-                
+                Desktop.getDesktop().open(new File("MonthlyStatement.pdf"));
             }catch (Exception e){
             }
         }

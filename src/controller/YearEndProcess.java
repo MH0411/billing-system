@@ -5,9 +5,14 @@
  */
 package controller;
 
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import main.RMIConnector;
 import model.ServerDetail;
 
@@ -31,7 +36,6 @@ public class YearEndProcess {
     }
     
     public void startProcess(){
-        
         String sql1 = "SET autocommit = 0";
         rc.setQuerySQL(host, port, sql1);
         
@@ -53,7 +57,8 @@ public class YearEndProcess {
         ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql2);
         
         int flag = 0;
-        for(int i = 0; i < data.size() && flag == 0; i++){
+        int currentPercent = 0;
+        for (int i = 0; i < data.size() && flag == 0; i++){
             String pmiNo = data.get(i).get(0);
             String totalYearCredit = data.get(i).get(1);
             String totalYearDebit = data.get(i).get(2);
@@ -74,15 +79,11 @@ public class YearEndProcess {
                 JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
                 String sql4 = "ROLLBACK";
                 rc.setQuerySQL(host, port, sql4);
-                
             } else {
                 String sql5 = "COMMIT";
                 rc.setQuerySQL(host, port, sql5);
             }
         }
-        
-        String sql6 = "SET autocommit = 1";
-        rc.setQuerySQL(host, port, sql6);
     }
     
     public void restore(){
@@ -92,5 +93,47 @@ public class YearEndProcess {
         rc.setQuerySQL(host, port, sql2);
         String sql3 = "INSERT far_customer_ledger SELECT * FROM far_customer_ledger_backup";
         rc.setQuerySQL(host, port, sql3);
+    }
+    
+    public void test(){
+        JFrame parentFrame = new JFrame();
+        parentFrame.setSize(500, 150);
+
+        parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        parentFrame.pack();
+        parentFrame.setLocationRelativeTo(null);
+        parentFrame.setVisible(true);
+
+        final JDialog dlg = new JDialog(parentFrame, "Progress Dialog", true);
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        dlg.add(BorderLayout.CENTER, progressBar);
+        JLabel percent = new JLabel("Progress... 0%");
+        dlg.add(BorderLayout.NORTH, percent);
+        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dlg.setSize(300, 75);
+        dlg.setLocationRelativeTo(parentFrame);
+
+        Thread t = new Thread(() -> {
+            dlg.setVisible(true);
+        });
+        t.start();
+        int currentPercent = 0;
+        //=========================================
+        for (int i = 0; i <= 500; i++) {
+            currentPercent = i * 100/90;
+            percent.setText("Progress... " + currentPercent + "%");
+            progressBar.setValue(currentPercent);
+            System.out.println(i+" "+currentPercent);
+            if(currentPercent == 100){
+                dlg.setVisible(false);
+            }
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        dlg.setVisible(true);
     }
 }
