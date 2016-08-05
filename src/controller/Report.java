@@ -140,29 +140,23 @@ public class Report {
                 tableHeader.setLockedWidth(true);
                 tableHeader.setTotalWidth(document.right() - document.left());
 
-                Image logo = Image.getInstance("pic/logo.png");
-                logo.scaleAbsolute(115, 50);
+                Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                logo.scaleAbsolute(120, 60);
 
                 PdfPCell cellLogo = new PdfPCell(logo);
-                cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cellLogo.setBorder(Rectangle.NO_BORDER);
-                cellLogo.setColspan(2);
-                cellLogo.setLeading(15f, 0.3f);
+                cellLogo.setColspan(4);
                 tableHeader.addCell(cellLogo);
-                
-                String addr = 
-                        " Universiti Teknikal Malaysia Melaka, \n"
-                        + " Hang Tuah Jaya, \n"
-                        + " 76100 Durian Tunggal, \n"
-                        + " Melaka, Malaysia.";
 
-                PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
-                cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
-                cellAddress.setBorder(Rectangle.NO_BORDER);
-                cellAddress.setColspan(2);
-                tableHeader.addCell(cellAddress);
+                PdfPCell cellLocation = new PdfPCell(new Phrase("Pusat Kesihatan UTeM", recti));
+                cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cellLocation.setBorder(Rectangle.NO_BORDER);
+                cellLocation.setColspan(4);
+                tableHeader.addCell(cellLocation);
                 
-                PdfPCell cellAnnual = new PdfPCell(new Phrase("\nYearly Account Statement\n\n", recti));
+                PdfPCell cellAnnual = new PdfPCell(new Phrase("\nCustomer Yearly Account Statement\n"
+                        + "for year "+ strYear +"\n\n", recti));
                 cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cellAnnual.setBorder(Rectangle.NO_BORDER);
                 cellAnnual.setColspan(4);
@@ -184,7 +178,7 @@ public class Report {
                 cell21.setBorder(Rectangle.NO_BORDER);
                 cell21.setColspan(3);
                 
-                PdfPCell cell31 = new PdfPCell(new Phrase("\n" + strDate + "\n\n", rectemja));
+                PdfPCell cell31 = new PdfPCell(new Phrase("\nReport Date: " + strDate + "\n\n", rectemja));
                 cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell31.setBorder(Rectangle.NO_BORDER);
                 cell31.setColspan(3);
@@ -448,17 +442,12 @@ public class Report {
                 tableFooter.setLockedWidth(true);
                 tableFooter.setTotalWidth(document.right() - document.left());
 
-                String message1 = "****Thank You****";
-                String message2 = "Please Come Again";
+                String message1 = "****End of Report****";
                 PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
                 cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
                 cellFooter1.setBorder(Rectangle.TOP);
-                PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
-                cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                cellFooter2.setBorder(Rectangle.NO_BORDER);
 
                 tableFooter.addCell(cellFooter1);
-                tableFooter.addCell(cellFooter2);
                 
                 document.add(tableHeader);
                 document.add(tableCust);
@@ -469,11 +458,12 @@ public class Report {
                 writer.close();
                 Desktop.getDesktop().open(new File("YearStatement.pdf"));
             }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e);
             }
         }
     }
     
-    public void generateDetailsStatement(String ic){
+    public void generateSummaryStatement(String ic){
             String sql1 = "SELECT DISTINCT "
                     + "pb.pmi_no, pb.patient_name, pb.id_no, pb.home_address, pb.mobile_phone, pb.email_address "
                     + "FROM far_customer_ledger cl, pms_patient_biodata pb "
@@ -493,7 +483,7 @@ public class Report {
                 document.setMargins(40, 30, 50, 50); 
 
                 try {
-                    PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("DetailsStatement.pdf"));
+                    PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("SummaryStatement.pdf"));
                     document.open();
 
                     //initialize pdf
@@ -515,29 +505,25 @@ public class Report {
                     tableHeader.setLockedWidth(true);
                     tableHeader.setTotalWidth(document.right() - document.left());
 
-                    Image logo = Image.getInstance("pic/logo.png");
-                    logo.scaleAbsolute(115, 50);
+                    Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                    logo.scaleAbsolute(120, 60);
 
                     PdfPCell cellLogo = new PdfPCell(logo);
-                    cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellLogo.setBorder(Rectangle.NO_BORDER);
-                    cellLogo.setColspan(2);
+                    cellLogo.setColspan(4);
                     cellLogo.setLeading(15f, 0.3f);
                     tableHeader.addCell(cellLogo);
-
-                    String addr = 
-                            " Universiti Teknikal Malaysia Melaka, \n"
-                            + " Hang Tuah Jaya, \n"
-                            + " 76100 Durian Tunggal, \n"
-                            + " Melaka, Malaysia.";
-
-                    PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
-                    cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellAddress.setBorder(Rectangle.NO_BORDER);
-                    cellAddress.setColspan(2);
-                    tableHeader.addCell(cellAddress);
-
-                    PdfPCell cellAnnual = new PdfPCell(new Phrase("\nDetails Account Statement\n\n", recti));
+                    
+                    PdfPCell cellLocation = new PdfPCell(new Phrase("Pusat Kesihatan UTeM", recti));
+                    cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellLocation.setBorder(Rectangle.NO_BORDER);
+                    cellLocation.setColspan(4);
+                    tableHeader.addCell(cellLocation);
+           
+                    Month m = new Month();
+                    PdfPCell cellAnnual = new PdfPCell(new Phrase("\nCustomer Summary Account Statement"
+                            + "for Period of January to "+ m.getMonthName() +"of "+ strYear +"\n\n", recti));
                     cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellAnnual.setBorder(Rectangle.NO_BORDER);
                     cellAnnual.setColspan(4);
@@ -559,7 +545,7 @@ public class Report {
                     cell21.setBorder(Rectangle.NO_BORDER);
                     cell21.setColspan(3);
 
-                    PdfPCell cell31 = new PdfPCell(new Phrase("\n" + strDate + "\n\n", rectemja));
+                    PdfPCell cell31 = new PdfPCell(new Phrase("\nReport Date: " + strDate + "\n\n", rectemja));
                     cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell31.setBorder(Rectangle.NO_BORDER);
                     cell31.setColspan(3);
@@ -573,7 +559,7 @@ public class Report {
                     tableTitle.setLockedWidth(true);
                     tableTitle.setTotalWidth(document.right() - document.left());
 
-                    PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
+                    PdfPCell cell61 = new PdfPCell(new Phrase("Txn Date", rectem));
                     cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
                     PdfPCell cell62 = new PdfPCell(new Phrase("Bill Number", rectem));
                     cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -713,26 +699,22 @@ public class Report {
                     PdfPCell cellFooter0 = new PdfPCell(new Phrase("", rectemja));
                     cellFooter0.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellFooter0.setBorder(Rectangle.NO_BORDER);
-                    String message1 = "****Thank You****";
-                    String message2 = "Please Come Again";
+                    String message1 = "****End of Report****";
                     PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
                     cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellFooter1.setBorder(Rectangle.TOP);
-                    PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
-                    cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellFooter2.setBorder(Rectangle.NO_BORDER);
 
                     tableFooter.addCell(cellFooter0);
                     tableFooter.addCell(cellFooter1);
-                    tableFooter.addCell(cellFooter2);
 
                     document.add(tableSummary);
                     document.add(tableFooter);
                     document.close();
                     writer.close();
-                    Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
+                    Desktop.getDesktop().open(new File("SummaryStatement.pdf"));
                     
                 } catch(Exception e){
+                    JOptionPane.showMessageDialog(null, e);
                 }
             } else {
                 String infoMessage = "Record not found.\nPlease recheck the IC number";
@@ -740,7 +722,7 @@ public class Report {
             }
     }
     
-    public void generateMonthlyStatement(String ic, String month){
+    public void generateDetailsStatement(String ic, String month){
         String[] strMonth = Month.selectedMonth(month);
         
         if (strMonth != null){
@@ -806,33 +788,28 @@ public class Report {
                     tableHeader.setLockedWidth(true);
                     tableHeader.setTotalWidth(document.right() - document.left());
 
-                    Image logo = Image.getInstance("pic/logo.png");
-                    logo.scaleAbsolute(115, 50);
+                    Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                    logo.scaleAbsolute(120, 60);
 
                     PdfPCell cellLogo = new PdfPCell(logo);
-                    cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellLogo.setBorder(Rectangle.NO_BORDER);
-                    cellLogo.setColspan(2);
+                    cellLogo.setColspan(4);
                     cellLogo.setLeading(15f, 0.3f);
                     tableHeader.addCell(cellLogo);
-
-                    String addr = 
-                            " Universiti Teknikal Malaysia Melaka, \n"
-                            + " Hang Tuah Jaya, \n"
-                            + " 76100 Durian Tunggal, \n"
-                            + " Melaka, Malaysia.";
-
-                    PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
-                    cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
-                    cellAddress.setBorder(Rectangle.NO_BORDER);
-                    cellAddress.setColspan(2);
-                    tableHeader.addCell(cellAddress);
-
-                    PdfPCell cellAnnual = new PdfPCell(new Phrase("\n"+ month +" Account Statement\n\n", recti));
-                    cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellAnnual.setBorder(Rectangle.NO_BORDER);
-                    cellAnnual.setColspan(4);
-                    tableHeader.addCell(cellAnnual);                
+                    
+                    PdfPCell cellLocation = new PdfPCell(new Phrase("Pusat Kesihatan UTeM", recti));
+                    cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellLocation.setBorder(Rectangle.NO_BORDER);
+                    cellLocation.setColspan(4);
+                    tableHeader.addCell(cellLocation);
+                    
+                    PdfPCell cellAnnual1 = new PdfPCell(new Phrase("\nCustomer Details Account Statement\n"
+                            + "for "+ month +" of "+ strYear +"\n\n", recti));
+                    cellAnnual1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cellAnnual1.setBorder(Rectangle.NO_BORDER);
+                    cellAnnual1.setColspan(4);
+                    tableHeader.addCell(cellAnnual1);                
 
                     //Customer Details
                     PdfPTable tableCust = new PdfPTable(1);
@@ -850,7 +827,7 @@ public class Report {
                     cell21.setBorder(Rectangle.NO_BORDER);
                     cell21.setColspan(3);
 
-                    PdfPCell cell31 = new PdfPCell(new Phrase("\n" + strDate + "\n\n", rectemja));
+                    PdfPCell cell31 = new PdfPCell(new Phrase("\nReport Date: " + strDate + "\n\n", rectemja));
                     cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell31.setBorder(Rectangle.NO_BORDER);
                     cell31.setColspan(3);
@@ -865,16 +842,16 @@ public class Report {
                     tableSummary.setLockedWidth(true);
                     tableSummary.setTotalWidth(document.right() - document.left());
 
-                    PdfPCell cell41 = new PdfPCell(new Phrase("Total Debit of "+ month +" (RM)", rectem));
+                    PdfPCell cell41 = new PdfPCell(new Phrase("\nTotal Debit of "+ month +" (RM)", rectem));
                     cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell41.setBorder(Rectangle.NO_BORDER);
-                    PdfPCell cell42 = new PdfPCell(new Phrase(df.format(Double.parseDouble(debit)), rectemja));
+                    PdfPCell cell42 = new PdfPCell(new Phrase("\n" + df.format(Double.parseDouble(debit)), rectemja));
                     cell42.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell42.setBorder(Rectangle.NO_BORDER);
                     PdfPCell cell51 = new PdfPCell(new Phrase("Total Credit of "+ month +" (RM)", rectem));
                     cell51.setHorizontalAlignment(Element.ALIGN_LEFT);
                     cell51.setBorder(Rectangle.NO_BORDER);
-                    PdfPCell cell52 = new PdfPCell(new Phrase(df.format(Double.parseDouble(credit)) + "\n\n", rectemja));
+                    PdfPCell cell52 = new PdfPCell(new Phrase(df.format(Double.parseDouble(credit)), rectemja));
                     cell52.setHorizontalAlignment(Element.ALIGN_RIGHT);
                     cell52.setBorder(Rectangle.NO_BORDER);
 
@@ -888,7 +865,7 @@ public class Report {
                     tableTitle.setLockedWidth(true);
                     tableTitle.setTotalWidth(document.right() - document.left());
 
-                    PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
+                    PdfPCell cell61 = new PdfPCell(new Phrase("Txn Date", rectem));
                     cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
                     PdfPCell cell62 = new PdfPCell(new Phrase("Description", rectem));
                     cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -901,7 +878,6 @@ public class Report {
                                         
                     document.add(tableHeader);
                     document.add(tableCust);
-                    document.add(tableSummary);
                     document.add(tableTitle);
 
                     for(int i = 0; i < dataBill.size(); i++){
@@ -974,19 +950,15 @@ public class Report {
                     PdfPCell cellFooter0 = new PdfPCell(new Phrase("", rectemja));
                     cellFooter0.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellFooter0.setBorder(Rectangle.NO_BORDER);
-                    String message1 = "****Thank You****";
-                    String message2 = "Please Come Again";
+                    String message1 = "****End of Report****";
                     PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
                     cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
                     cellFooter1.setBorder(Rectangle.TOP);
-                    PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
-                    cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cellFooter2.setBorder(Rectangle.NO_BORDER);
 
                     tableFooter.addCell(cellFooter0);
                     tableFooter.addCell(cellFooter1);
-                    tableFooter.addCell(cellFooter2);
-
+                    
+                    document.add(tableSummary);
                     document.add(tableFooter);
                     document.close();
                     writer.close();
@@ -1005,7 +977,7 @@ public class Report {
             document.setMargins(40, 30, 50, 50); 
 
             try {
-                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("MonthlyStatement.pdf"));
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("DetailsStatement.pdf"));
                 document.open();
 
                 strMonth = new String[]{"January", "February", "March", "April", "May", "June", 
@@ -1067,33 +1039,28 @@ public class Report {
                         tableHeader.setLockedWidth(true);
                         tableHeader.setTotalWidth(document.right() - document.left());
 
-                        Image logo = Image.getInstance("pic/logo.png");
-                        logo.scaleAbsolute(115, 50);
+                        Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                        logo.scaleAbsolute(120, 60);
 
                         PdfPCell cellLogo = new PdfPCell(logo);
-                        cellLogo.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                        cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cellLogo.setBorder(Rectangle.NO_BORDER);
-                        cellLogo.setColspan(2);
+                        cellLogo.setColspan(4);
                         cellLogo.setLeading(15f, 0.3f);
                         tableHeader.addCell(cellLogo);
 
-                        String addr = 
-                                " Universiti Teknikal Malaysia Melaka, \n"
-                                + " Hang Tuah Jaya, \n"
-                                + " 76100 Durian Tunggal, \n"
-                                + " Melaka, Malaysia.";
+                        PdfPCell cellLocation = new PdfPCell(new Phrase("Pusat Kesihatan UTeM", recti));
+                        cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellLocation.setBorder(Rectangle.NO_BORDER);
+                        cellLocation.setColspan(4);
+                        tableHeader.addCell(cellLocation);
 
-                        PdfPCell cellAddress = new PdfPCell(new Phrase(addr, rectemja));
-                        cellAddress.setHorizontalAlignment(Element.ALIGN_LEFT);
-                        cellAddress.setBorder(Rectangle.NO_BORDER);
-                        cellAddress.setColspan(2);
-                        tableHeader.addCell(cellAddress);
-
-                        PdfPCell cellAnnual = new PdfPCell(new Phrase("\n"+ strMonth[k] +" Account Statement\n\n", recti));
-                        cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        cellAnnual.setBorder(Rectangle.NO_BORDER);
-                        cellAnnual.setColspan(4);
-                        tableHeader.addCell(cellAnnual);                
+                        PdfPCell cellAnnual1 = new PdfPCell(new Phrase("\nCustomer Details Account Statement\n"
+                                + "for "+ strMonth[k] +" of "+ strYear +"\n\n", recti));
+                        cellAnnual1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        cellAnnual1.setBorder(Rectangle.NO_BORDER);
+                        cellAnnual1.setColspan(4);
+                        tableHeader.addCell(cellAnnual1);                
 
                         //Customer Details
                         PdfPTable tableCust = new PdfPTable(1);
@@ -1126,16 +1093,16 @@ public class Report {
                         tableSummary.setLockedWidth(true);
                         tableSummary.setTotalWidth(document.right() - document.left());
 
-                        PdfPCell cell41 = new PdfPCell(new Phrase("Total Debit of "+ strMonth[k] +" (RM)", rectem));
+                        PdfPCell cell41 = new PdfPCell(new Phrase("\nTotal Debit of "+ strMonth[k] +" (RM)", rectem));
                         cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
                         cell41.setBorder(Rectangle.NO_BORDER);
-                        PdfPCell cell42 = new PdfPCell(new Phrase(df.format(Double.parseDouble(debit)), rectemja));
+                        PdfPCell cell42 = new PdfPCell(new Phrase("\n" + df.format(Double.parseDouble(debit)), rectemja));
                         cell42.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         cell42.setBorder(Rectangle.NO_BORDER);
                         PdfPCell cell51 = new PdfPCell(new Phrase("Total Credit of "+ strMonth[k] +" (RM)", rectem));
                         cell51.setHorizontalAlignment(Element.ALIGN_LEFT);
                         cell51.setBorder(Rectangle.NO_BORDER);
-                        PdfPCell cell52 = new PdfPCell(new Phrase(df.format(Double.parseDouble(credit)) + "\n\n", rectemja));
+                        PdfPCell cell52 = new PdfPCell(new Phrase(df.format(Double.parseDouble(credit)), rectemja));
                         cell52.setHorizontalAlignment(Element.ALIGN_RIGHT);
                         cell52.setBorder(Rectangle.NO_BORDER);
 
@@ -1149,7 +1116,7 @@ public class Report {
                         tableTitle.setLockedWidth(true);
                         tableTitle.setTotalWidth(document.right() - document.left());
 
-                        PdfPCell cell61 = new PdfPCell(new Phrase("Transaction Date", rectem));
+                        PdfPCell cell61 = new PdfPCell(new Phrase("Txn Date", rectem));
                         cell61.setHorizontalAlignment(Element.ALIGN_LEFT);
                         PdfPCell cell62 = new PdfPCell(new Phrase("Description", rectem));
                         cell62.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1162,7 +1129,6 @@ public class Report {
 
                         document.add(tableHeader);
                         document.add(tableCust);
-                        document.add(tableSummary);
                         document.add(tableTitle);
 
                         for(int i = 0; i < dataBill.size(); i++){
@@ -1235,33 +1201,217 @@ public class Report {
                         PdfPCell cellFooter0 = new PdfPCell(new Phrase("", rectemja));
                         cellFooter0.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cellFooter0.setBorder(Rectangle.NO_BORDER);
-                        String message1 = "****Thank You****";
-                        String message2 = "Please Come Again";
+                        String message1 = "****End of Report****";
                         PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
                         cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
                         cellFooter1.setBorder(Rectangle.TOP);
-                        PdfPCell cellFooter2 = new PdfPCell(new Phrase(message2, rectemja));
-                        cellFooter2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                        cellFooter2.setBorder(Rectangle.NO_BORDER);
 
                         tableFooter.addCell(cellFooter0);
                         tableFooter.addCell(cellFooter1);
-                        tableFooter.addCell(cellFooter2);
 
+                        document.add(tableSummary);
                         document.add(tableFooter);
                         document.newPage();
 
-                        } else {
-                            String infoMessage = "Record not found.\nPlease recheck the IC number";
-                            JOptionPane.showMessageDialog(null, infoMessage, "Not found", JOptionPane.WARNING_MESSAGE);
-                            break;
+                        if (k == (strMonth.length - 1)) {
+                            document.close();
+                            writer.close();
+                            Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
                         }
+                    } else {
+                        String infoMessage = "Record not found.\nPlease recheck the IC number";
+                        JOptionPane.showMessageDialog(null, infoMessage, "Not found", JOptionPane.WARNING_MESSAGE);
+                        break;
                     }
-                document.close();
-                writer.close();
-                Desktop.getDesktop().open(new File("MonthlyStatement.pdf"));
+                }
             }catch (Exception e){
+                JOptionPane.showMessageDialog(null, e);
             }
+        }
+    }
+    
+    public void generateYearEndProcessingReport(){
+        String sql = 
+                "SELECT pb.patient_name, cl.customer_id, cl.dr_amt_13, cl.cr_amt_13 "
+                + "FROM far_customer_ledger cl, pms_patient_biodata pb "
+                + "WHERE cl.customer_id = pb.pmi_no";
+        ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql);
+                
+        //create new document
+        Document document = new Document(PageSize.A4, 36, 36, 64, 36) {}; 
+        document.setMargins(40, 30, 50, 50); 
+
+        double deficient = 0;
+        double totalYearCredit = 0;
+        double totalYearDebit = 0;
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("YearEndReport.pdf"));
+            document.open();
+
+            //initialize pdf
+            Font recno = new Font(Font.TIMES_ROMAN, 10);
+            Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
+            Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
+            Font rectemja = new Font(Font.COURIER, 12);
+            Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
+            Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
+
+            //header
+            PdfPTable table = new PdfPTable(6);
+            table.setWidths(new float[]{0.5f, 1.5f, 4f, 1.5f, 1.5f, 1.5f});
+            table.setLockedWidth(true);
+            table.setTotalWidth(document.right() - document.left());
+
+            PdfPTable tableHeader = new PdfPTable(4);
+            tableHeader.setWidths(new float[]{3f, 4f, 3.5f, 4f});
+            tableHeader.setLockedWidth(true);
+            tableHeader.setTotalWidth(document.right() - document.left());
+
+            Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+            logo.scaleAbsolute(120, 60);
+
+            PdfPCell cellLogo = new PdfPCell(logo);
+            cellLogo.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellLogo.setBorder(Rectangle.NO_BORDER);
+            cellLogo.setColspan(4);
+            cellLogo.setLeading(15f, 0.3f);
+            tableHeader.addCell(cellLogo);
+
+            PdfPCell cellLocation = new PdfPCell(new Phrase("Pusat Kesihatan UTeM", recti));
+            cellLocation.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellLocation.setBorder(Rectangle.NO_BORDER);
+            cellLocation.setColspan(4);
+            tableHeader.addCell(cellLocation);
+
+            PdfPCell cellAnnual = new PdfPCell(new Phrase("\nYear End Processing Report\n"
+                    + "for year "+ strYear +"\n\n", recti));
+            cellAnnual.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellAnnual.setBorder(Rectangle.NO_BORDER);
+            cellAnnual.setColspan(4);
+            tableHeader.addCell(cellAnnual);                
+
+            PdfPCell cell31 = new PdfPCell(new Phrase("Report Date: " + strDate + "\n\n", rectemja));
+            cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell31.setBorder(Rectangle.NO_BORDER);
+            cell31.setColspan(3);
+            tableHeader.addCell(cell31);
+
+            PdfPTable tableCust = new PdfPTable(4);
+            tableCust.setWidths(new float[]{2.5f, 5f, 2f, 2f});
+            tableCust.setLockedWidth(true);
+            tableCust.setTotalWidth(document.right() - document.left());
+
+            PdfPCell cell41 = new PdfPCell(new Phrase("Cust ID", rectem));
+            cell41.setHorizontalAlignment(Element.ALIGN_LEFT);
+            PdfPCell cell42 = new PdfPCell(new Phrase("Cust Name", rectem));
+            cell42.setHorizontalAlignment(Element.ALIGN_LEFT);
+            PdfPCell cell43 = new PdfPCell(new Phrase("Debit (RM)", rectem));
+            cell43.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell44 = new PdfPCell(new Phrase("Credit (RM)", rectem));
+            cell44.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            tableCust.addCell(cell41);
+            tableCust.addCell(cell42);
+            tableCust.addCell(cell43);
+            tableCust.addCell(cell44);
+
+            for(int i = 0; i < data.size(); i++){
+                String name = data.get(i).get(0);
+                String custId = data.get(i).get(1);
+                String yearDebit = data.get(i).get(2);
+                String yearCredit = data.get(i).get(3);
+            
+                PdfPCell cell161 = new PdfPCell(new Phrase(custId, rectemja));
+                cell161.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell161.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                PdfPCell cell162 = new PdfPCell(new Phrase(name, rectemja));
+                cell162.setHorizontalAlignment(Element.ALIGN_LEFT);
+                cell162.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                PdfPCell cell163 = new PdfPCell(new Phrase(yearDebit, rectemja));
+                cell163.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell163.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+                PdfPCell cell164 = new PdfPCell(new Phrase(yearCredit, rectemja));
+                cell164.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell164.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+
+                tableCust.addCell(cell161);
+                tableCust.addCell(cell162);
+                tableCust.addCell(cell163);
+                tableCust.addCell(cell164);
+                
+                totalYearDebit += Double.parseDouble(yearDebit);
+                totalYearCredit += Double.parseDouble(yearCredit);
+            }
+
+            PdfPCell cell171 = new PdfPCell(new Phrase("Total", rectem));
+            cell171.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell171.setColspan(2);
+            PdfPCell cell172 = new PdfPCell(new Phrase(df.format(totalYearDebit), rectemja));
+            cell172.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell cell173 = new PdfPCell(new Phrase(df.format(totalYearCredit), rectemja));
+            cell173.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            tableCust.addCell(cell171);
+            tableCust.addCell(cell172);
+            tableCust.addCell(cell173);
+
+            //Summary
+            PdfPTable tableSummary = new PdfPTable(2);
+            tableSummary.setWidths(new float[]{10.5f, 4f});
+            tableSummary.setLockedWidth(true);
+            tableSummary.setTotalWidth(document.right() - document.left());
+            
+            deficient = totalYearDebit - totalYearCredit;
+
+            PdfPCell cell201 = new PdfPCell(new Phrase("\nTotal Debit (RM)", rectem));
+            cell201.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell201.setBorder(Rectangle.NO_BORDER);
+            PdfPCell cell202 = new PdfPCell(new Phrase("\n" + df.format(totalYearDebit), rectemja));
+            cell202.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell202.setBorder(Rectangle.NO_BORDER);
+            PdfPCell cell211 = new PdfPCell(new Phrase("Total Credit (RM)", rectem));
+            cell211.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell211.setBorder(Rectangle.NO_BORDER);
+            PdfPCell cell212 = new PdfPCell(new Phrase("" + df.format(totalYearCredit), rectemja));
+            cell212.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell212.setBorder(Rectangle.NO_BORDER);
+            PdfPCell cell221 = new PdfPCell(new Phrase("Deficient of Customers (RM)", rectem));
+            cell221.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell221.setBorder(Rectangle.NO_BORDER);
+            PdfPCell cell222 = new PdfPCell(new Phrase("" + df.format(deficient) + "\n\n", rectemja));
+            cell222.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell222.setBorder(Rectangle.NO_BORDER);
+
+            tableSummary.addCell(cell201);
+            tableSummary.addCell(cell202);
+            tableSummary.addCell(cell211);
+            tableSummary.addCell(cell212);
+            tableSummary.addCell(cell221);
+            tableSummary.addCell(cell222);
+
+            //footer
+            PdfPTable tableFooter = new PdfPTable(1);
+            tableFooter.setWidths(new float[]{10.5f});
+            tableFooter.setLockedWidth(true);
+            tableFooter.setTotalWidth(document.right() - document.left());
+
+            String message1 = "****End of Report****";
+            PdfPCell cellFooter1 = new PdfPCell(new Phrase(message1, rectemja));
+            cellFooter1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cellFooter1.setBorder(Rectangle.TOP);
+
+            tableFooter.addCell(cellFooter1);
+
+            document.add(tableHeader);
+            document.add(tableCust);
+            document.add(tableSummary);
+            document.add(tableFooter);
+            document.close();
+            writer.close();
+            Desktop.getDesktop().open(new File("YearEndReport.pdf"));
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
         }
     }
 }

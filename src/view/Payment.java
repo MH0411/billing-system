@@ -142,11 +142,7 @@ public class Payment extends javax.swing.JFrame {
 
         jLabel3.setText("Subtotal :");
 
-        jtf_Subtotal.setText("5");
-
         jLabel6.setText("Grand Total :");
-
-        jtf_GrandTotal.setText("5");
 
         jLabel4.setText("Payment Method :");
 
@@ -309,7 +305,7 @@ public class Payment extends javax.swing.JFrame {
                 //Update customer ledger credit
                 String sql1 = "UPDATE far_customer_ledger "
                         + "SET pay_method = '" + method + "', " + month.getCreditMonth() + " = '" + creditMonth + "', txn_date = '" + txnDate + "' "
-                        + "where customer_id = '" + custId + "' ";
+                        + "WHERE customer_id = '" + custId + "' ";
                 rc.setQuerySQL(host, port, sql1);
                 
                 cash = Double.parseDouble(jtf_Amount.getText());
@@ -398,13 +394,13 @@ public class Payment extends javax.swing.JFrame {
      */
     private void jtf_AmountKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_AmountKeyTyped
         // TODO add your handling code here:
-//        char c = evt.getKeyChar();
-//        if (!(Character.isDigit(c) || c == KeyEvent.VK_PERIOD
-//                || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
-//            evt.consume();
-//        } else if (jtf_Amount.getText().length() > 8) {
-//            evt.consume();
-//        }
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c) || c == KeyEvent.VK_PERIOD
+                || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+            evt.consume();
+        } else if (jtf_Amount.getText().length() > 8) {
+            evt.consume();
+        }
     }//GEN-LAST:event_jtf_AmountKeyTyped
 
     /**

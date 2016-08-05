@@ -13,11 +13,11 @@ package view;
 import view.AddBillItem;
 import controller.SendEmail;
 import controller.Receipt;
-import controller.ProgressBarWin;
 import controller.Report;
 import controller.Search;
 import controller.YearEndProcess;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import model.Month;
 import model.ServerDetail;
 import java.awt.Desktop;
@@ -28,8 +28,10 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -39,6 +41,8 @@ import javax.swing.JProgressBar;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -200,6 +204,7 @@ public class Billing extends javax.swing.JFrame {
         btn_YearlyStatement = new javax.swing.JButton();
         btn_MonthlyStatement = new javax.swing.JButton();
         btn_DetailsStatement = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
         btn_Back = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
 
@@ -320,6 +325,11 @@ public class Billing extends javax.swing.JFrame {
                 jtf_SearchNameMousePressed(evt);
             }
         });
+        jtf_SearchName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_SearchNameKeyTyped(evt);
+            }
+        });
 
         jLabel6.setText("Name:");
 
@@ -334,6 +344,11 @@ public class Billing extends javax.swing.JFrame {
         jtf_SearchIC.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jtf_SearchICMousePressed(evt);
+            }
+        });
+        jtf_SearchIC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_SearchICKeyTyped(evt);
             }
         });
 
@@ -459,6 +474,11 @@ public class Billing extends javax.swing.JFrame {
                 jtf_mb_SearchNameMousePressed(evt);
             }
         });
+        jtf_mb_SearchName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_mb_SearchNameKeyTyped(evt);
+            }
+        });
 
         jLabel8.setText("Enter Bill Information:");
 
@@ -485,6 +505,11 @@ public class Billing extends javax.swing.JFrame {
         jtf_mb_SearchIC.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jtf_mb_SearchICMousePressed(evt);
+            }
+        });
+        jtf_mb_SearchIC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_mb_SearchICKeyTyped(evt);
             }
         });
 
@@ -1125,6 +1150,7 @@ public class Billing extends javax.swing.JFrame {
         jPanel13.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2"));
 
         btn_StartProcess.setText("Start Year End Processing");
+        btn_StartProcess.setEnabled(false);
         btn_StartProcess.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_StartProcessActionPerformed(evt);
@@ -1159,6 +1185,7 @@ public class Billing extends javax.swing.JFrame {
         jLabel25.setText("(Only use when Step 2 failed)");
 
         btn_RetoreData.setText("Restore Customer Data");
+        btn_RetoreData.setEnabled(false);
         btn_RetoreData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_RetoreDataActionPerformed(evt);
@@ -1197,9 +1224,8 @@ public class Billing extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel12Layout.setVerticalGroup(
@@ -1237,6 +1263,12 @@ public class Billing extends javax.swing.JFrame {
 
         jPanel23.setBackground(new java.awt.Color(255, 255, 255));
         jPanel23.setBorder(javax.swing.BorderFactory.createTitledBorder("Enter IC number*"));
+
+        jtf_ReportIC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_ReportICKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel23Layout = new javax.swing.GroupLayout(jPanel23);
         jPanel23.setLayout(jPanel23Layout);
@@ -1349,6 +1381,8 @@ public class Billing extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
@@ -1356,13 +1390,20 @@ public class Billing extends javax.swing.JFrame {
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(872, Short.MAX_VALUE))
+                .addGap(133, 133, 133)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(590, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(286, Short.MAX_VALUE))
         );
 
@@ -2467,19 +2508,51 @@ public class Billing extends javax.swing.JFrame {
     private void btn_BackupDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_BackupDataActionPerformed
         // TODO add your handling code here:
         YearEndProcess yep = new YearEndProcess();
-        yep.backup();
+        jpb_ProgressBar1.setStringPainted(true);
+        int status = yep.backup();
+        jpb_ProgressBar1.setValue(status);
+        if(status == 100){
+            btn_StartProcess.setEnabled(true);  
+            String infoMessage = "Data has been backuped.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            String infoMessage = "There is an error during backup process.\n"
+                    + "Please contact computer technician for fixing the issue.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btn_BackupDataActionPerformed
 
     private void btn_StartProcessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_StartProcessActionPerformed
         // TODO add your handling code here:
         YearEndProcess yep = new YearEndProcess();
-        yep.startProcess();
+        jpb_ProgressBar2.setStringPainted(true);
+        int status = yep.startProcess();
+        jpb_ProgressBar2.setValue(status);
+        if(status == 50){
+            btn_BackupData.setEnabled(true);
+            String infoMessage = "There is an error during processing.\n"
+                    + "Please restore the customer data and rerun the year end processing.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+             String infoMessage = "The year end processing is completed.";
+             JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btn_StartProcessActionPerformed
 
     private void btn_RetoreDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_RetoreDataActionPerformed
         // TODO add your handling code here:
         YearEndProcess yep = new YearEndProcess();
-        yep.restore();
+        jpb_ProgressBar3.setStringPainted(true);
+        int status = yep.restore();
+        jpb_ProgressBar3.setValue(status);
+        if (status == 100){
+             String infoMessage = "The data has been restored.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);
+        } else{
+            String infoMessage = "There is an error during restoring process.\n"
+                    + "Please contact computer technician for fixing the issue.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btn_RetoreDataActionPerformed
 
     private void btn_YearlyStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_YearlyStatementActionPerformed
@@ -2501,7 +2574,7 @@ public class Billing extends javax.swing.JFrame {
         
         if (!ic.equals("")){
             Report report = new Report();
-            report.generateMonthlyStatement(ic, jcb_Month.getSelectedItem().toString());
+            report.generateDetailsStatement(ic, jcb_Month.getSelectedItem().toString());
         } else {
             String infoMessage = "Please insert IC number before creating report.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
@@ -2514,12 +2587,61 @@ public class Billing extends javax.swing.JFrame {
 
         if (!ic.equals("")){
             Report report = new Report();
-            report.generateDetailsStatement(ic);
+            report.generateSummaryStatement(ic);
         } else {
             String infoMessage = "Please insert IC number before creating report.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btn_DetailsStatementActionPerformed
+
+    private void jtf_mb_SearchICKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mb_SearchICKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+            evt.consume();
+        } else if (jtf_mb_SearchIC.getText().length() > 12) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtf_mb_SearchICKeyTyped
+
+    private void jtf_SearchICKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_SearchICKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+            evt.consume();
+        } else if (jtf_SearchIC.getText().length() > 12) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtf_SearchICKeyTyped
+
+    private void jtf_ReportICKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_ReportICKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) 
+            evt.consume();
+        else if (jtf_ReportIC.getText().length() > 12)
+            evt.consume();
+    }//GEN-LAST:event_jtf_ReportICKeyTyped
+
+    private void jtf_SearchNameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_SearchNameKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if(!(Character.isAlphabetic(c) ||  (c == KeyEvent.VK_BACK_SPACE)||  c == KeyEvent.VK_DELETE ))
+            evt.consume();
+        else if (jtf_SearchName.getText().length() > 100)
+            evt.consume();        
+    }//GEN-LAST:event_jtf_SearchNameKeyTyped
+
+    private void jtf_mb_SearchNameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mb_SearchNameKeyTyped
+        // TODO add your handling code here:
+        char c = evt.getKeyChar();
+
+        if(!(Character.isAlphabetic(c) ||  (c == KeyEvent.VK_BACK_SPACE)||  c == KeyEvent.VK_DELETE ))
+            evt.consume();
+        else if (jtf_mb_SearchName.getText().length() > 100)
+            evt.consume();                
+    }//GEN-LAST:event_jtf_mb_SearchNameKeyTyped
 
     /**
      * Display manage miscellaneous items.
@@ -2663,7 +2785,6 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_AddItem;
     private javax.swing.JButton btn_Back;
     private javax.swing.JButton btn_BackupData;
-    private javax.swing.JButton btn_BackupData1;
     private javax.swing.JButton btn_DeleteItem;
     private javax.swing.JButton btn_DetailsStatement;
     private javax.swing.JButton btn_GenerateBill;
@@ -2684,6 +2805,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_mp_Clear;
     private javax.swing.JButton btn_mp_Delete;
     private javax.swing.JButton btn_mp_Update;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2711,13 +2833,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
-    private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel16;
-    private javax.swing.JPanel jPanel17;
-    private javax.swing.JPanel jPanel18;
-    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel23;

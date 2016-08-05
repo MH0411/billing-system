@@ -20,6 +20,7 @@ public class Month {
     private String creditMonth = null;
     private String debitMonth = null;
     private String month = monthFormat.format(date);
+    private String monthName = null;
     private static Date d = new Date();
     private static DateFormat yearFormat = new SimpleDateFormat("yyyy");
     private static String year = yearFormat.format(d);
@@ -27,6 +28,7 @@ public class Month {
     public Month(){
         determineCreditMonth();
         determineDebitMonth();
+        determineMonthName();
     }
     
     public String getCreditMonth(){
@@ -49,6 +51,10 @@ public class Month {
      */
     public void setMonth(String month) {
         this.month = month;
+    }
+    
+    public String getMonthName(){
+        return monthName;
     }
     
     /**
@@ -183,5 +189,52 @@ public class Month {
             }
         }
         return null;
+    }
+    
+    public void determineMonthName(){
+        
+        //Check current month
+        if (null != getMonth()) {
+            switch (getMonth()) {
+                case "01":
+                    monthName = "January";
+                    break;
+                case "02":
+                    monthName = "February";
+                    break;
+                case "03":
+                    monthName = "March";
+                    break;
+                case "04":
+                    monthName = "April";
+                    break;
+                case "05":
+                    monthName = "May";
+                    break;
+                case "06":
+                    monthName = "June";
+                    break;
+                case "07":
+                    monthName = "July";
+                    break;
+                case "08":
+                    monthName = "August";
+                    break;
+                case "09":
+                    monthName = "September";
+                    break;
+                case "10":
+                    monthName = "October";
+                    break;
+                case "11":
+                    monthName = "November";
+                    break;
+                case "12":
+                    monthName = "December";
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
