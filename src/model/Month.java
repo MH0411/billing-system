@@ -53,8 +53,18 @@ public class Month {
         this.month = month;
     }
     
+    /**
+     * @return the month name
+     */
     public String getMonthName(){
         return monthName;
+    }
+
+    /**
+     * @return the year
+     */
+    public static String getYear() {
+        return year;
     }
     
     /**
@@ -157,33 +167,33 @@ public class Month {
         }
     }
     
-    public static String[] selectedMonth(String month){
+    public static String selectedMonth(String month){
         if (month != null || month.equalsIgnoreCase("all")) {
             switch (month) {
                 case "January":
-                    return new String[]{"dr_amt_1", "cr_amt_1", year + "-01-"};
+                    return "-01-";
                 case "February":
-                   return new String[]{"dr_amt_2", "cr_amt_2", year + "-02-"};
+                   return "-02-";
                 case "March":
-                    return new String[]{"dr_amt_3", "cr_amt_3", year + "-03-"};
+                    return "-03-";
                 case "April":
-                    return new String[]{"dr_amt_4", "cr_amt_4", year + "-04-"};
+                    return "-04-";
                 case "May":
-                    return new String[]{"dr_amt_5", "cr_amt_5", year + "-05-"};
+                    return "-05-";
                 case "June":
-                    return new String[]{"dr_amt_6", "cr_amt_6", year + "-06-"};
+                    return  "-06-";
                 case "July":
-                    return new String[]{"dr_amt_7", "cr_amt_7", year + "-07-"};
+                    return "-07-";
                 case "August":
-                    return new String[]{"dr_amt_8", "cr_amt_8", year + "-08-"};
+                    return "-08-";
                 case "September":
-                    return new String[]{"dr_amt_9", "cr_amt_9", year + "-09-"};
+                    return "-09-";
                 case "October":
-                    return new String[]{"dr_amt_10", "cr_amt_10", year + "-10-"};
+                    return "-10-";
                 case "November":
-                    return new String[]{"dr_amt_11", "cr_amt_11", year + "-11-"};
+                    return "-11-";
                 case "December":
-                    return new String[]{"dr_amt_12", "cr_amt_12", year + "-12-"};
+                    return "-12-";
                 default:
                     return null;
             }

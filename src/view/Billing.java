@@ -75,21 +75,12 @@ public class Billing extends javax.swing.JFrame {
      */
     public Billing(String hostname, int port) {
         initComponents();
-        
         ServerDetail.setHost(hostname);
         ServerDetail.setPort(port);
         host = ServerDetail.getHost();
         portNo = ServerDetail.getPort();
         
-        super.pack();
-        super.setLocationRelativeTo(null);
-        super.setVisible(true);
-        
-        jtf_mm_ItemCd.setEditable(false);
-        jtf_mp_Code.setEditable(false);
-        btnGroup.add(jrb_Unpaid);
-        btnGroup.add(jrb_Paid);
-        
+        init();
         tableManageMiscellaneous();
         tableBillingParameter();
     }
@@ -202,9 +193,11 @@ public class Billing extends javax.swing.JFrame {
         jcb_Month = new javax.swing.JComboBox<>();
         jPanel25 = new javax.swing.JPanel();
         btn_YearlyStatement = new javax.swing.JButton();
-        btn_MonthlyStatement = new javax.swing.JButton();
         btn_DetailsStatement = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        btn_YEPReport = new javax.swing.JButton();
+        btn_SummaryStatement = new javax.swing.JButton();
+        jPanel15 = new javax.swing.JPanel();
+        jcb_Year = new javax.swing.JComboBox<>();
         btn_Back = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
 
@@ -1319,17 +1312,24 @@ public class Billing extends javax.swing.JFrame {
             }
         });
 
-        btn_MonthlyStatement.setText("Customer Details Account Statement");
-        btn_MonthlyStatement.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_MonthlyStatementActionPerformed(evt);
-            }
-        });
-
-        btn_DetailsStatement.setText("Customer Summary Account Statement");
+        btn_DetailsStatement.setText("Customer Details Account Statement");
         btn_DetailsStatement.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_DetailsStatementActionPerformed(evt);
+            }
+        });
+
+        btn_YEPReport.setText("Year End Processing Report");
+        btn_YEPReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_YEPReportActionPerformed(evt);
+            }
+        });
+
+        btn_SummaryStatement.setText("Customer Summary Account Statement");
+        btn_SummaryStatement.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SummaryStatementActionPerformed(evt);
             }
         });
 
@@ -1339,11 +1339,12 @@ public class Billing extends javax.swing.JFrame {
             jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel25Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_MonthlyStatement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_YEPReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_SummaryStatement, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel25Layout.setVerticalGroup(
             jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1351,10 +1352,32 @@ public class Billing extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn_MonthlyStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btn_YEPReport, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(btn_SummaryStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        jPanel15.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel15.setBorder(javax.swing.BorderFactory.createTitledBorder("Select a year"));
+
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jcb_Year, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jcb_Year, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel22Layout = new javax.swing.GroupLayout(jPanel22);
@@ -1363,11 +1386,15 @@ public class Billing extends javax.swing.JFrame {
             jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel22Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel22Layout.createSequentialGroup()
+                        .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel15, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel22Layout.setVerticalGroup(
             jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1375,13 +1402,13 @@ public class Billing extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -1390,21 +1417,14 @@ public class Billing extends javax.swing.JFrame {
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(133, 133, 133)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(590, Short.MAX_VALUE))
+                .addContainerGap(862, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel11Layout.createSequentialGroup()
-                        .addGap(78, 78, 78)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(286, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(158, Short.MAX_VALUE))
         );
 
         tab.addTab("Report", jPanel11);
@@ -2528,14 +2548,20 @@ public class Billing extends javax.swing.JFrame {
         jpb_ProgressBar2.setStringPainted(true);
         int status = yep.startProcess();
         jpb_ProgressBar2.setValue(status);
-        if(status == 50){
+        if(status == 0){
+            String infoMessage = "The year end process of this year is done.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
+        } else if(status == 50){
             btn_BackupData.setEnabled(true);
             String infoMessage = "There is an error during processing.\n"
                     + "Please restore the customer data and rerun the year end processing.";
-            JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);     
         }else{
-             String infoMessage = "The year end processing is completed.";
-             JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);
+            String infoMessage = "The year end processing is completed.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);             
+            btn_StartProcess.setEnabled(false);
+            Report report = new Report();
+            report.generateYearEndProcessingReport();
         }
     }//GEN-LAST:event_btn_StartProcessActionPerformed
 
@@ -2568,31 +2594,31 @@ public class Billing extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_YearlyStatementActionPerformed
 
-    private void btn_MonthlyStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_MonthlyStatementActionPerformed
+    private void btn_DetailsStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DetailsStatementActionPerformed
         // TODO add your handling code here:
         String ic = jtf_ReportIC.getText();
         
         if (!ic.equals("")){
             Report report = new Report();
-            report.generateDetailsStatement(ic, jcb_Month.getSelectedItem().toString());
-        } else {
-            String infoMessage = "Please insert IC number before creating report.";
-            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-    }//GEN-LAST:event_btn_MonthlyStatementActionPerformed
-
-    private void btn_DetailsStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DetailsStatementActionPerformed
-        // TODO add your handling code here:
-        String ic = jtf_ReportIC.getText();
-
-        if (!ic.equals("")){
-            Report report = new Report();
-            report.generateSummaryStatement(ic);
+            report.generateDetailsStatement(ic, jcb_Month.getSelectedItem().toString(), jcb_Year.getSelectedItem().toString());
         } else {
             String infoMessage = "Please insert IC number before creating report.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btn_DetailsStatementActionPerformed
+
+    private void btn_SummaryStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SummaryStatementActionPerformed
+        // TODO add your handling code here:
+//        String ic = jtf_ReportIC.getText();
+//
+//        if (!ic.equals("")){
+//            Report report = new Report();
+//            report.generateSummaryStatement(ic, jcb_Year.getSelectedItem().toString());
+//        } else {
+//            String infoMessage = "Please insert IC number before creating report.";
+//            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+//        }
+    }//GEN-LAST:event_btn_SummaryStatementActionPerformed
 
     private void jtf_mb_SearchICKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mb_SearchICKeyTyped
         // TODO add your handling code here:
@@ -2643,70 +2669,76 @@ public class Billing extends javax.swing.JFrame {
             evt.consume();                
     }//GEN-LAST:event_jtf_mb_SearchNameKeyTyped
 
+    private void btn_YEPReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_YEPReportActionPerformed
+        // TODO add your handling code here:
+        Report report = new Report();
+        report.generateYearEndProcessingReport();
+    }//GEN-LAST:event_btn_YEPReportActionPerformed
+
     /**
      * Display manage miscellaneous items.
      */
     private void tableManageMiscellaneous() {
-        try {
-            String sql = "SELECT * FROM far_miscellaneous_item";
-            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
-            DefaultTableModel model = (DefaultTableModel) jt_MM.getModel();
-
-            //remove all row
-            int rowCount = model.getRowCount();
-            for (int i = rowCount - 1; i >= 0; i--) {
-                model.removeRow(i);
-            }
-
-            //add row and show value
-            for (int i = 0; i < data.size(); i++) {
-                model.addRow(new Object[]{"", "", "", "", ""});
-
-                jt_MM.setValueAt(data.get(i).get(1), i, 0);
-                jt_MM.setValueAt(data.get(i).get(2), i, 1);
-                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(3))), i, 2);
-                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(4))), i, 3);
-            }
-            
-            generateMiscItemCode();
-            
-            tableMiscellaneousItemSorter();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
+//        try {
+//            String sql = "SELECT * FROM far_miscellaneous_item";
+//            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+//            DefaultTableModel model = (DefaultTableModel) jt_MM.getModel();
+//
+//            //remove all row
+//            int rowCount = model.getRowCount();
+//            for (int i = rowCount - 1; i >= 0; i--) {
+//                model.removeRow(i);
+//            }
+//
+//            //add row and show value
+//            for (int i = 0; i < data.size(); i++) {
+//                model.addRow(new Object[]{"", "", "", "", ""});
+//
+//                jt_MM.setValueAt(data.get(i).get(1), i, 0);
+//                jt_MM.setValueAt(data.get(i).get(2), i, 1);
+//                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(3))), i, 2);
+//                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(4))), i, 3);
+//            }
+//            
+//            generateMiscItemCode();
+//            
+//            tableMiscellaneousItemSorter();
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, e);
+//        }
     }
     
     /**
      * Display table billing parameter
      */
     public void tableBillingParameter(){
-        try{
-            String sql = "SELECT * FROM far_billing_parameter ";
-            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
-            DefaultTableModel model = (DefaultTableModel) jt_BillingParameter.getModel();
-
-             //remove all row
-            int rowCount = model.getRowCount();
-            for (int i = rowCount - 1; i >= 0; i--) {
-                model.removeRow(i);
-            }
-
-            //add row and show value
-            for (int i = 0; i < data.size(); i++) {
-                model.addRow(new Object[]{"", "", "", "", ""});
-                
-                jt_BillingParameter.setValueAt(data.get(i).get(0), i, 0);
-                jt_BillingParameter.setValueAt(data.get(i).get(1), i, 1);
-                jt_BillingParameter.setValueAt(data.get(i).get(2), i, 2);
-                jt_BillingParameter.setValueAt(data.get(i).get(3), i, 3);
-                jt_BillingParameter.setValueAt(data.get(i).get(5), i, 4);
-            }
-            
-            generateParamCode();
-            
-        } catch (Exception e){
-             JOptionPane.showMessageDialog(null, e);
-        }
+//        try{
+//            String sql = "SELECT * FROM far_billing_parameter ";
+//            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+//            DefaultTableModel model = (DefaultTableModel) jt_BillingParameter.getModel();
+//
+//             //remove all row
+//            int rowCount = model.getRowCount();
+//            for (int i = rowCount - 1; i >= 0; i--) {
+//                model.removeRow(i);
+//            }
+//
+//            //add row and show value
+//            for (int i = 0; i < data.size(); i++) {
+//                model.addRow(new Object[]{"", "", "", "", ""});
+//                
+//                jt_BillingParameter.setValueAt(data.get(i).get(0), i, 0);
+//                jt_BillingParameter.setValueAt(data.get(i).get(1), i, 1);
+//                jt_BillingParameter.setValueAt(data.get(i).get(2), i, 2);
+//                jt_BillingParameter.setValueAt(data.get(i).get(3), i, 3);
+//                jt_BillingParameter.setValueAt(data.get(i).get(5), i, 4);
+//            }
+//            
+//            generateParamCode();
+//            
+//        } catch (Exception e){
+//             JOptionPane.showMessageDialog(null, e);
+//        }
     }
     
      /**
@@ -2775,6 +2807,23 @@ public class Billing extends javax.swing.JFrame {
         jtf_mm_ItemCd.setText(code);
     }
     
+    private void init(){
+        super.pack();
+        super.setLocationRelativeTo(null);
+        super.setVisible(true);
+        
+        jtf_mm_ItemCd.setEditable(false);
+        jtf_mp_Code.setEditable(false);
+        btnGroup.add(jrb_Unpaid);
+        btnGroup.add(jrb_Paid);
+        
+        String year = Month.getYear();
+        for(int i = -7; i <= 0; i++){
+            jcb_Year.addItem(String.valueOf(Integer.parseInt(year)+i));
+        }
+        jcb_Year.setSelectedIndex(7);
+    }
+    
     public static void main(String[] args) {
         new Billing("10.73.32.200", 1099).setVisible(true);
     }
@@ -2788,13 +2837,14 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_DeleteItem;
     private javax.swing.JButton btn_DetailsStatement;
     private javax.swing.JButton btn_GenerateBill;
-    private javax.swing.JButton btn_MonthlyStatement;
     private javax.swing.JButton btn_Payment;
     private javax.swing.JButton btn_PrintReceipt;
     private javax.swing.JButton btn_RefreshMM;
     private javax.swing.JButton btn_RetoreData;
     private javax.swing.JButton btn_SearchBilling;
     private javax.swing.JButton btn_StartProcess;
+    private javax.swing.JButton btn_SummaryStatement;
+    private javax.swing.JButton btn_YEPReport;
     private javax.swing.JButton btn_YearlyStatement;
     private javax.swing.JButton btn_mb_SearchBill;
     private javax.swing.JButton btn_mm_Add;
@@ -2805,7 +2855,6 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_mp_Clear;
     private javax.swing.JButton btn_mp_Delete;
     private javax.swing.JButton btn_mp_Update;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2833,6 +2882,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;
@@ -2857,6 +2907,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JCheckBox jcb_Enable;
     private javax.swing.JComboBox<String> jcb_Month;
+    private javax.swing.JComboBox<String> jcb_Year;
     private javax.swing.JProgressBar jpb_ProgressBar1;
     private javax.swing.JProgressBar jpb_ProgressBar2;
     private javax.swing.JProgressBar jpb_ProgressBar3;
