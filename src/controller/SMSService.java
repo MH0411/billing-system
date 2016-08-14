@@ -14,7 +14,7 @@ public class SMSService {
     private static String textToSend, receiver, host;
     private int port = 9500;
     private String username = "admin";
-    private String password = "932473";
+    private String password = "biocore";
     
     public SMSService(String phone, String message, String hostAdd) {
         receiver = phone;

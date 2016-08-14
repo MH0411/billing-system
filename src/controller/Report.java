@@ -124,9 +124,9 @@ public class Report {
                 document.open();
                 
                 //initialize pdf
-                Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-                Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-                Font rectemja = new Font(Font.COURIER, 12);
+                Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+                Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+                Font rectemja = new Font(Font.FontFamily.COURIER, 12);
                 
                 //header
                 PdfPTable table = new PdfPTable(6);
@@ -139,7 +139,7 @@ public class Report {
                 tableHeader.setLockedWidth(true);
                 tableHeader.setTotalWidth(document.right() - document.left());
 
-                Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
                 logo.scaleAbsolute(120, 60);
 
                 PdfPCell cellLogo = new PdfPCell(logo);
@@ -456,6 +456,12 @@ public class Report {
                 document.close();
                 writer.close();
                 Desktop.getDesktop().open(new File("YearStatement.pdf"));
+                
+                if (email != null){
+                    EmailSender es = new EmailSender(email, "Yearly Account Statement", "", "YearStatement.pdf");
+                    es.sendEmail();
+                }
+                
             }catch(Exception e){
                 JOptionPane.showMessageDialog(null, e);
             }
@@ -486,9 +492,9 @@ public class Report {
                     document.open();
 
                     //initialize pdf
-                    Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-                    Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-                    Font rectemja = new Font(Font.COURIER, 12);
+                    Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+                    Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+                    Font rectemja = new Font(Font.FontFamily.COURIER, 12);
 
                     //header
                     PdfPTable table = new PdfPTable(6);
@@ -501,7 +507,7 @@ public class Report {
                     tableHeader.setLockedWidth(true);
                     tableHeader.setTotalWidth(document.right() - document.left());
 
-                    Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                    Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
                     logo.scaleAbsolute(120, 60);
 
                     PdfPCell cellLogo = new PdfPCell(logo);
@@ -702,6 +708,7 @@ public class Report {
                 String pmiNo = dataPatient.get(0).get(0);
                 String name = dataPatient.get(0).get(1);
                 String address = dataPatient.get(0).get(3);
+                String email =dataPatient.get(0).get(5);
                 
                 String sql2 = "SELECT "
                         + "ch.txn_date, ch.bill_no, ch.item_amt, ch.amt_paid "
@@ -721,9 +728,9 @@ public class Report {
                     document.open();
 
                     //initialize pdf
-                    Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-                    Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-                    Font rectemja = new Font(Font.COURIER, 12);
+                    Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+                    Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+                    Font rectemja = new Font(Font.FontFamily.COURIER, 12);
 
                     //header
                     PdfPTable table = new PdfPTable(6);
@@ -736,7 +743,7 @@ public class Report {
                     tableHeader.setLockedWidth(true);
                     tableHeader.setTotalWidth(document.right() - document.left());
 
-                    Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                    Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
                     logo.scaleAbsolute(120, 60);
 
                     PdfPCell cellLogo = new PdfPCell(logo);
@@ -925,6 +932,11 @@ public class Report {
                     writer.close();
                     Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
                     
+                    if (email != null){
+                        EmailSender es = new EmailSender(email, "Details Account Statement", "", "DetailsStatement.pdf");
+                        es.sendEmail();
+                    }
+                    
                 } catch (Exception e) {
                 }
             } else {
@@ -957,6 +969,7 @@ public class Report {
                     if (!dataPatient.isEmpty()){
                         String name = dataPatient.get(0).get(1);
                         String address = dataPatient.get(0).get(3);
+                        String email = dataPatient.get(0).get(5);
 
                         String sql2 = "SELECT "
                                 + "ch.txn_date, ch.bill_no, ch.item_amt, ch.amt_paid "
@@ -968,9 +981,9 @@ public class Report {
                         ArrayList<ArrayList<String>> dataBill = rc.getQuerySQL(host, port, sql2);
 
                         //initialize pdf
-                        Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-                        Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-                        Font rectemja = new Font(Font.COURIER, 12);
+                        Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+                        Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+                        Font rectemja = new Font(Font.FontFamily.COURIER, 12);
 
                         //header
                         PdfPTable table = new PdfPTable(6);
@@ -983,7 +996,7 @@ public class Report {
                         tableHeader.setLockedWidth(true);
                         tableHeader.setTotalWidth(document.right() - document.left());
 
-                        Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+                        Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
                         logo.scaleAbsolute(120, 60);
 
                         PdfPCell cellLogo = new PdfPCell(logo);
@@ -1173,6 +1186,9 @@ public class Report {
                             document.close();
                             writer.close();
                             Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
+                            
+                            EmailSender es = new EmailSender(email, "Details Account Statement", "", "DetailsStatement.pdf");
+                            es.sendEmail();
                         }
                     } else {
                         String infoMessage = "Record not found.\nPlease recheck the IC number";
@@ -1206,9 +1222,9 @@ public class Report {
             document.open();
 
             //initialize pdf
-            Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-            Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-            Font rectemja = new Font(Font.COURIER, 12);
+            Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+            Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+            Font rectemja = new Font(Font.FontFamily.COURIER, 12);
 
             //header
             PdfPTable table = new PdfPTable(6);
@@ -1221,7 +1237,7 @@ public class Report {
             tableHeader.setLockedWidth(true);
             tableHeader.setTotalWidth(document.right() - document.left());
 
-            Image logo = Image.getInstance("pic/LogoJawiUTeM.png");
+            Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
             logo.scaleAbsolute(120, 60);
 
             PdfPCell cellLogo = new PdfPCell(logo);

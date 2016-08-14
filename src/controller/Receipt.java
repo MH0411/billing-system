@@ -150,12 +150,11 @@ public class Receipt {
             receiptNo = tmpNum + date1;
 
             //initialize pdf
-            Font recno = new Font(Font.TIMES_ROMAN, 10);
-            Font recti = new Font(Font.HELVETICA, 16, Font.BOLD);
-            Font rectem = new Font(Font.HELVETICA, 12, Font.BOLD);
-            Font rectemja = new Font(Font.COURIER, 12);
-            Font rectemjaBold = new Font(Font.COURIER, 12, Font.BOLD);
-            Font rectemjaBig = new Font(Font.COURIER, 16, Font.BOLD);
+            Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+            Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+            Font rectemja = new Font(Font.FontFamily.COURIER, 12);
+            Font rectemjaBold = new Font(Font.FontFamily.COURIER, 12, Font.BOLD);
+            Font rectemjaBig = new Font(Font.FontFamily.COURIER, 16, Font.BOLD);
             
             //--------------------------table bill------------------------------------------>
             PdfPTable table = new PdfPTable(6);
@@ -169,7 +168,7 @@ public class Receipt {
             header.setTotalWidth(document.right() - document.left());
             
             //--------------------------table header------------------------------------------>
-            Image logo = Image.getInstance("pic/logo.png");
+            Image logo = Image.getInstance("logoUTeM/LogoJawiUTeM.png");
             logo.scaleAbsolute(115, 50);
 
             PdfPCell cell1 = new PdfPCell(logo);
@@ -493,7 +492,7 @@ public class Receipt {
             
             document.close();//close document
             writer.close();
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         } 

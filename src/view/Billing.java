@@ -10,10 +10,11 @@ package view;
  * @author Amalina
  * @author Ho Zhen Hong
  */
+import controller.EmailSender;
 import view.AddBillItem;
-import controller.SendEmail;
 import controller.Receipt;
 import controller.Report;
+import controller.SMSService;
 import controller.Search;
 import controller.YearEndProcess;
 import java.awt.BorderLayout;
@@ -195,7 +196,6 @@ public class Billing extends javax.swing.JFrame {
         btn_YearlyStatement = new javax.swing.JButton();
         btn_DetailsStatement = new javax.swing.JButton();
         btn_YEPReport = new javax.swing.JButton();
-        btn_SummaryStatement = new javax.swing.JButton();
         jPanel15 = new javax.swing.JPanel();
         jcb_Year = new javax.swing.JComboBox<>();
         btn_Back = new javax.swing.JButton();
@@ -351,6 +351,11 @@ public class Billing extends javax.swing.JFrame {
         jtf_SearchID.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jtf_SearchIDMousePressed(evt);
+            }
+        });
+        jtf_SearchID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_SearchIDKeyTyped(evt);
             }
         });
 
@@ -512,6 +517,11 @@ public class Billing extends javax.swing.JFrame {
         jtf_mb_SearchID.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jtf_mb_SearchIDMousePressed(evt);
+            }
+        });
+        jtf_mb_SearchID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_mb_SearchIDKeyTyped(evt);
             }
         });
 
@@ -1326,13 +1336,6 @@ public class Billing extends javax.swing.JFrame {
             }
         });
 
-        btn_SummaryStatement.setText("Customer Summary Account Statement");
-        btn_SummaryStatement.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_SummaryStatementActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel25Layout = new javax.swing.GroupLayout(jPanel25);
         jPanel25.setLayout(jPanel25Layout);
         jPanel25Layout.setHorizontalGroup(
@@ -1341,9 +1344,8 @@ public class Billing extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_YearlyStatement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_YEPReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_SummaryStatement, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE))
+                    .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                    .addComponent(btn_YEPReport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel25Layout.setVerticalGroup(
@@ -1355,9 +1357,7 @@ public class Billing extends javax.swing.JFrame {
                 .addComponent(btn_DetailsStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_YEPReport, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addComponent(btn_SummaryStatement, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel15.setBackground(new java.awt.Color(255, 255, 255));
@@ -1406,8 +1406,8 @@ public class Billing extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
@@ -1424,7 +1424,7 @@ public class Billing extends javax.swing.JFrame {
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(158, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
 
         tab.addTab("Report", jPanel11);
@@ -1986,13 +1986,19 @@ public class Billing extends javax.swing.JFrame {
 
             billNo = jt_ListPatientBill.getModel().getValueAt(rowIndex, 0).toString();
             custId = jt_ListPatientBill.getModel().getValueAt(rowIndex, 1).toString();
-            String grandTotal = jt_ListPatientBill.getModel().getValueAt(rowIndex, 8).toString();
             
             String sql = "SELECT item_cd, item_desc, item_amt "
                     + "FROM far_customer_dtl "
                     + "WHERE bill_no = '"+ billNo +"' "
                     + "AND customer_id = '"+ custId +"'";
             ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+            
+            String sql1 = "SELECT item_amt "
+                    + "FROM far_customer_hdr "
+                    + "WHERE bill_no = '"+ billNo +"'"
+                    + "AND customer_id = '"+ custId +"'";
+            ArrayList<ArrayList<String>> data1 = rc.getQuerySQL(host, portNo, sql1);
+            String grandTotal = data1.get(0).get(0);
             
             String gstAmount = "0.00";
             String serviceChargeAmount = "0.00";
@@ -2030,16 +2036,27 @@ public class Billing extends javax.swing.JFrame {
             pdf.printPaidBill();
             Desktop.getDesktop().open(new File("Receipt.pdf"));
             
-            SendEmail sendEmail = new SendEmail(custId,
-                    billNo,
-                    String.valueOf(df.format(subtotalBeforeTax)),
-                    String.valueOf(grandTotal),
-                    String.valueOf(gstAmount),
-                    String.valueOf(serviceChargeAmount),
-                    String.valueOf(discountAmount),
-                    String.valueOf(df.format(rounding))
-            );
-            sendEmail.send();
+            String sql2 = "SELECT patient_name, email_address, mobile_phone "
+                    + "FROM pms_patient_biodata "
+                    + "WHERE pmi_no = '"+ custId +"'";
+            ArrayList<ArrayList<String>> data2 = rc.getQuerySQL(host, portNo, sql2);
+            String name = data2.get(0).get(0);
+            String email = data2.get(0).get(1);
+            String phone = data2.get(0).get(2);
+            
+            if(email != null){
+                EmailSender es = new EmailSender(email, "Receipt", "Thanks you have a nice day.", "Receipt.pdf");
+                es.sendEmail();
+            }
+            String message = "Hi " + name + ", Below is the receipt details: \n"
+                    + "Subtotal : " + subtotal + "\n"
+                    + "Service Charge : " + serviceChargeAmount + "\n"
+                    + "GST : " + gstAmount + "\n"
+                    + "Discount : " + discountAmount + "\n"
+                    + "Rounding : " + df.format(rounding) + "\n"
+                    + "Grand Total : " + grandTotal;
+            SMSService service = new SMSService("+6" + phone, message, ServerDetail.getHost());
+                
             
         } catch (Exception ex) {
             Logger.getLogger(Billing.class.getName()).log(Level.SEVERE, null, ex);
@@ -2083,6 +2100,14 @@ public class Billing extends javax.swing.JFrame {
         payment.setCustId(custId);
         payment.setBillNo(billNo);
         payment.displayBillDetail();
+        
+        DefaultTableModel model = (DefaultTableModel) jt_ListItemPerPatient.getModel();
+        //remove all row
+        int rowCount = model.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+        model.removeRow(i);
+        }
+        
         payment.setVisible(true);
     }//GEN-LAST:event_btn_PaymentActionPerformed
 
@@ -2533,7 +2558,7 @@ public class Billing extends javax.swing.JFrame {
         jpb_ProgressBar1.setValue(status);
         if(status == 100){
             btn_StartProcess.setEnabled(true);  
-            String infoMessage = "Data has been backuped.";
+            String infoMessage = "Data has been backup.";
             JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);
         }else{
             String infoMessage = "There is an error during backup process.\n"
@@ -2607,19 +2632,6 @@ public class Billing extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_DetailsStatementActionPerformed
 
-    private void btn_SummaryStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SummaryStatementActionPerformed
-        // TODO add your handling code here:
-//        String ic = jtf_ReportIC.getText();
-//
-//        if (!ic.equals("")){
-//            Report report = new Report();
-//            report.generateSummaryStatement(ic, jcb_Year.getSelectedItem().toString());
-//        } else {
-//            String infoMessage = "Please insert IC number before creating report.";
-//            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-//        }
-    }//GEN-LAST:event_btn_SummaryStatementActionPerformed
-
     private void jtf_mb_SearchICKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mb_SearchICKeyTyped
         // TODO add your handling code here:
         char c = evt.getKeyChar();
@@ -2653,7 +2665,7 @@ public class Billing extends javax.swing.JFrame {
         // TODO add your handling code here:
         char c = evt.getKeyChar();
 
-        if(!(Character.isAlphabetic(c) ||  (c == KeyEvent.VK_BACK_SPACE)||  c == KeyEvent.VK_DELETE ))
+        if(!(Character.isAlphabetic(c) ||  c == KeyEvent.VK_BACK_SPACE||  c == KeyEvent.VK_DELETE ||  c == KeyEvent.VK_SPACE))
             evt.consume();
         else if (jtf_SearchName.getText().length() > 100)
             evt.consume();        
@@ -2663,7 +2675,7 @@ public class Billing extends javax.swing.JFrame {
         // TODO add your handling code here:
         char c = evt.getKeyChar();
 
-        if(!(Character.isAlphabetic(c) ||  (c == KeyEvent.VK_BACK_SPACE)||  c == KeyEvent.VK_DELETE ))
+        if(!(Character.isAlphabetic(c) ||  (c == KeyEvent.VK_BACK_SPACE)||  c == KeyEvent.VK_DELETE ||  c == KeyEvent.VK_SPACE))
             evt.consume();
         else if (jtf_mb_SearchName.getText().length() > 100)
             evt.consume();                
@@ -2675,70 +2687,84 @@ public class Billing extends javax.swing.JFrame {
         report.generateYearEndProcessingReport();
     }//GEN-LAST:event_btn_YEPReportActionPerformed
 
+    private void jtf_mb_SearchIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mb_SearchIDKeyTyped
+        // TODO add your handling code here:
+        if (jtf_mb_SearchIC.getText().length() > 12) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtf_mb_SearchIDKeyTyped
+
+    private void jtf_SearchIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_SearchIDKeyTyped
+        // TODO add your handling code here:
+        if (jtf_mb_SearchIC.getText().length() > 12) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jtf_SearchIDKeyTyped
+
     /**
      * Display manage miscellaneous items.
      */
     private void tableManageMiscellaneous() {
-//        try {
-//            String sql = "SELECT * FROM far_miscellaneous_item";
-//            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
-//            DefaultTableModel model = (DefaultTableModel) jt_MM.getModel();
-//
-//            //remove all row
-//            int rowCount = model.getRowCount();
-//            for (int i = rowCount - 1; i >= 0; i--) {
-//                model.removeRow(i);
-//            }
-//
-//            //add row and show value
-//            for (int i = 0; i < data.size(); i++) {
-//                model.addRow(new Object[]{"", "", "", "", ""});
-//
-//                jt_MM.setValueAt(data.get(i).get(1), i, 0);
-//                jt_MM.setValueAt(data.get(i).get(2), i, 1);
-//                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(3))), i, 2);
-//                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(4))), i, 3);
-//            }
-//            
-//            generateMiscItemCode();
-//            
-//            tableMiscellaneousItemSorter();
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, e);
-//        }
+        try {
+            String sql = "SELECT * FROM far_miscellaneous_item";
+            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+            DefaultTableModel model = (DefaultTableModel) jt_MM.getModel();
+
+            //remove all row
+            int rowCount = model.getRowCount();
+            for (int i = rowCount - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+
+            //add row and show value
+            for (int i = 0; i < data.size(); i++) {
+                model.addRow(new Object[]{"", "", "", "", ""});
+
+                jt_MM.setValueAt(data.get(i).get(1), i, 0);
+                jt_MM.setValueAt(data.get(i).get(2), i, 1);
+                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(3))), i, 2);
+                jt_MM.setValueAt(df.format(Double.parseDouble(data.get(i).get(4))), i, 3);
+            }
+            
+            generateMiscItemCode();
+            
+            tableMiscellaneousItemSorter();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
     
     /**
      * Display table billing parameter
      */
     public void tableBillingParameter(){
-//        try{
-//            String sql = "SELECT * FROM far_billing_parameter ";
-//            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
-//            DefaultTableModel model = (DefaultTableModel) jt_BillingParameter.getModel();
-//
-//             //remove all row
-//            int rowCount = model.getRowCount();
-//            for (int i = rowCount - 1; i >= 0; i--) {
-//                model.removeRow(i);
-//            }
-//
-//            //add row and show value
-//            for (int i = 0; i < data.size(); i++) {
-//                model.addRow(new Object[]{"", "", "", "", ""});
-//                
-//                jt_BillingParameter.setValueAt(data.get(i).get(0), i, 0);
-//                jt_BillingParameter.setValueAt(data.get(i).get(1), i, 1);
-//                jt_BillingParameter.setValueAt(data.get(i).get(2), i, 2);
-//                jt_BillingParameter.setValueAt(data.get(i).get(3), i, 3);
-//                jt_BillingParameter.setValueAt(data.get(i).get(5), i, 4);
-//            }
-//            
-//            generateParamCode();
-//            
-//        } catch (Exception e){
-//             JOptionPane.showMessageDialog(null, e);
-//        }
+        try{
+            String sql = "SELECT * FROM far_billing_parameter ";
+            ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+            DefaultTableModel model = (DefaultTableModel) jt_BillingParameter.getModel();
+
+             //remove all row
+            int rowCount = model.getRowCount();
+            for (int i = rowCount - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+
+            //add row and show value
+            for (int i = 0; i < data.size(); i++) {
+                model.addRow(new Object[]{"", "", "", "", ""});
+                
+                jt_BillingParameter.setValueAt(data.get(i).get(0), i, 0);
+                jt_BillingParameter.setValueAt(data.get(i).get(1), i, 1);
+                jt_BillingParameter.setValueAt(data.get(i).get(2), i, 2);
+                jt_BillingParameter.setValueAt(data.get(i).get(3), i, 3);
+                jt_BillingParameter.setValueAt(data.get(i).get(5), i, 4);
+            }
+            
+            generateParamCode();
+            
+        } catch (Exception e){
+             JOptionPane.showMessageDialog(null, e);
+        }
     }
     
      /**
@@ -2843,7 +2869,6 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JButton btn_RetoreData;
     private javax.swing.JButton btn_SearchBilling;
     private javax.swing.JButton btn_StartProcess;
-    private javax.swing.JButton btn_SummaryStatement;
     private javax.swing.JButton btn_YEPReport;
     private javax.swing.JButton btn_YearlyStatement;
     private javax.swing.JButton btn_mb_SearchBill;

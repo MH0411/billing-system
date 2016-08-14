@@ -5,11 +5,12 @@
  */
 package view;
 
-import controller.SendEmail;
 import controller.Receipt;
 import model.Month;
 import model.ServerDetail;
 import com.sun.webkit.dom.EventImpl;
+import controller.EmailSender;
+import controller.SMSService;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -378,6 +379,29 @@ public class Payment extends javax.swing.JFrame {
                 );
                 pdf.printPaidBill();
                 Desktop.getDesktop().open(new File("Receipt.pdf"));
+                
+                String sql5 = "SELECT patient_name, email_address, mobile_phone "
+                        + "FROM pms_patient_biodata "
+                        + "WHERE pmi_no = '"+ custId +"'";
+                ArrayList<ArrayList<String>> data2 = rc.getQuerySQL(host, port, sql5);
+                String name = data2.get(0).get(0);
+                String email = data2.get(0).get(1);
+                String phone = data2.get(0).get(2);
+
+                if(email != null){
+                    EmailSender es = new EmailSender(email, "Receipt", "Thanks you have a nice day.", "Receipt.pdf");
+                    es.sendEmail();
+                }
+                String message = "Hi " + name + ", Below is the receipt details: \n"
+                        + "Subtotal : " + subtotal + "\n"
+                        + "Service Charge : " + serviceChargeAmount + "\n"
+                        + "GST : " + gstAmount + "\n"
+                        + "Discount : " + discountAmount + "\n"
+                        + "Rounding : " + df.format(rounding) + "\n"
+                        + "Grand Total : " + grandTotal + "\n"
+                        + "Cash : " + amount + "\n"
+                        + "Change : " + change;
+                SMSService service = new SMSService("+6" + phone, message, ServerDetail.getHost());
                 
                 dispose(); 
                 

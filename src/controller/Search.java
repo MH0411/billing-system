@@ -43,7 +43,7 @@ public class Search {
                     + "AND pe.STATUS ='Discharge' "
                     + "AND pom.episode_code like '"+ strDate1 +" %' " 
                     + "AND pe.episode_date = '"+ strDate +"' "
-                    + "AND pb.patient_name = '"+ name +"' "
+                    + "AND pb.patient_name LIKE '%"+ name +"%' "
                     + "AND NOT EXISTS ("
                     + "SELECT ch.order_no FROM far_customer_hdr ch "
                     + "WHERE ch.order_no =  pom.order_no) "
@@ -112,7 +112,7 @@ public class Search {
                 + "FROM far_customer_hdr ch, pms_patient_biodata pb "
                 + "WHERE ch.payment = '"+ status +"' "
                 + "AND pb.pmi_no = ch.customer_id "
-                + "AND pb.patient_name = '"+ name +"'";
+                + "AND pb.patient_name LIKE '%"+ name +"%'";
         ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql);
         return data;
     }
