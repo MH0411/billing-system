@@ -5,14 +5,7 @@
  */
 package controller;
 
-import java.awt.BorderLayout;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import main.RMIConnector;
 import model.Month;
 import model.ServerDetail;
@@ -51,10 +44,12 @@ public class YearEndProcess {
                     + "SET process_status = '1' "
                     + "WHERE code = 'yep'";
             rc.getQuerySQL(host, port, sql4);
+            System.out.println(sql4);
             
             return 100;
             
         } catch (Exception e){
+            e.printStackTrace();
             return 0;
         }
     }
@@ -71,8 +66,11 @@ public class YearEndProcess {
             ArrayList<ArrayList<String>> yep= rc.getQuerySQL(host, port, sql0);
             String processStatus = yep.get(0).get(0);
             String year = yep.get(0).get(1);
+            
+            String strYear = Month.getYear();
+            strYear = String.valueOf(Integer.parseInt(strYear) - 1);
 
-            if(processStatus.equals("1") && year.equals(Month.getYear())){
+            if(processStatus.equals("1") && year.equals(strYear)){
                 String sql1 = "SET autocommit = 0";
                 rc.setQuerySQL(host, port, sql1);
 
@@ -98,7 +96,7 @@ public class YearEndProcess {
                     String pmiNo = data.get(i).get(0);
                     String totalYearCredit = data.get(i).get(1);
                     String totalYearDebit = data.get(i).get(2);
-                    String sql3 = "UPDATE far_customer_ledger set "
+                    String sql3 = "UPDATE far_customer_ledger SET "
                             + "cr_amt_1 = '0', cr_amt_2 = '0', cr_amt_3 = '0', cr_amt_4 = '0', "
                             + "cr_amt_5 = '0', cr_amt_6 = '0', cr_amt_7 = '0', cr_amt_8 = '0', "
                             + "cr_amt_9 = '0', cr_amt_10 = '0', cr_amt_11 = '0', cr_amt_12 = '0', cr_amt_13 = '"+ totalYearCredit +"', "
@@ -128,7 +126,7 @@ public class YearEndProcess {
                             String sql7 = "UPDATE far_year_end_parameter "
                                     + "SET process_status = '0', processed_year = '"+ Month.getYear() +"' "
                                     + "WHERE code = 'yep'";
-                            rc.getQuerySQL(host, port, sql7);
+                            rc.setQuerySQL(host, port, sql7);
 
                             return 100;
                         }
@@ -137,8 +135,9 @@ public class YearEndProcess {
             } else {
                 return 0;
             }
-            return 100;
+            return 0;
         }catch(Exception e){
+            e.printStackTrace();
             return 50;
         }
     }
@@ -166,6 +165,7 @@ public class YearEndProcess {
             return 100;
             
         } catch (Exception e){
+            e.printStackTrace();
             return 0;
         }
     }

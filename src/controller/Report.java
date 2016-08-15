@@ -412,19 +412,19 @@ public class Report {
                 PdfPCell cell201 = new PdfPCell(new Phrase("\nTotal Debit (RM)", rectem));
                 cell201.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell201.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell202 = new PdfPCell(new Phrase("\n" + totalYearDebit, rectemja));
+                PdfPCell cell202 = new PdfPCell(new Phrase("\n" + df.format(totalYearDebit), rectemja));
                 cell202.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 cell202.setBorder(Rectangle.NO_BORDER);
                 PdfPCell cell211 = new PdfPCell(new Phrase("Total Credit (RM)", rectem));
                 cell211.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell211.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell212 = new PdfPCell(new Phrase("" + totalYearCredit, rectemja));
+                PdfPCell cell212 = new PdfPCell(new Phrase("" + df.format(totalYearCredit), rectemja));
                 cell212.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 cell212.setBorder(Rectangle.NO_BORDER);
                 PdfPCell cell221 = new PdfPCell(new Phrase("Deficient (RM)", rectem));
                 cell221.setHorizontalAlignment(Element.ALIGN_LEFT);
                 cell221.setBorder(Rectangle.NO_BORDER);
-                PdfPCell cell222 = new PdfPCell(new Phrase("" + deficient + "\n\n", rectemja));
+                PdfPCell cell222 = new PdfPCell(new Phrase("" + df.format(deficient) + "\n\n", rectemja));
                 cell222.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 cell222.setBorder(Rectangle.NO_BORDER);
                 
@@ -979,7 +979,20 @@ public class Report {
                                 + "AND ch.txn_date LIKE '%"+ period +"%' "
                                 + "ORDER BY ch.txn_date, ch.bill_no";
                         ArrayList<ArrayList<String>> dataBill = rc.getQuerySQL(host, port, sql2);
+                        
+                        //Skip current month if no transaction
+                        if(dataBill.isEmpty()){
+                            if (k == (monthList.length - 1)) {
+                                document.close();
+                                writer.close();
+                                Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
 
+                                EmailSender es = new EmailSender(email, "Details Account Statement", "", "DetailsStatement.pdf");
+                                es.sendEmail();
+                            }
+                            continue;
+                        }
+                        
                         //initialize pdf
                         Font recti = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
                         Font rectem = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
@@ -1182,14 +1195,6 @@ public class Report {
                         document.add(tableFooter);
                         document.newPage();
 
-                        if (k == (monthList.length - 1)) {
-                            document.close();
-                            writer.close();
-                            Desktop.getDesktop().open(new File("DetailsStatement.pdf"));
-                            
-                            EmailSender es = new EmailSender(email, "Details Account Statement", "", "DetailsStatement.pdf");
-                            es.sendEmail();
-                        }
                     } else {
                         String infoMessage = "Record not found.\nPlease recheck the IC number";
                         JOptionPane.showMessageDialog(null, infoMessage, "Not found", JOptionPane.WARNING_MESSAGE);
@@ -1266,10 +1271,10 @@ public class Report {
             cellAnnual.setColspan(4);
             tableHeader.addCell(cellAnnual);                
 
-            PdfPCell cell31 = new PdfPCell(new Phrase("Report Date: " + strDate + "\n\n", rectemja));
+            PdfPCell cell31 = new PdfPCell(new Phrase("\nReport Date: " + strDate + "\n\n", rectemja));
             cell31.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell31.setBorder(Rectangle.NO_BORDER);
-            cell31.setColspan(3);
+            cell31.setColspan(4);
             tableHeader.addCell(cell31);
 
             PdfPTable tableCust = new PdfPTable(4);

@@ -5,21 +5,15 @@
  */
 package view;
 
-import view.Billing;
-import view.AddBillItem;
 import model.Month;
 import model.ServerDetail;
-import java.awt.Desktop;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.RMIConnector;
@@ -493,6 +487,7 @@ public final class Generate extends javax.swing.JFrame {
         payment.setBillNo(billNo);
         payment.displayBillDetail();
         payment.setVisible(true);
+        btn_Payment.setEnabled(false);
     }//GEN-LAST:event_btn_PaymentActionPerformed
 
     private void btn_BackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_BackActionPerformed
@@ -556,7 +551,7 @@ public final class Generate extends javax.swing.JFrame {
                     + "pdd.DISPENSED_QTY, "
                     + "mdc.D_PRICE_PPACK, "
                     + "(pdd.DISPENSED_QTY * mdc.D_PRICE_PPACK) AS TOTAL, "
-                    + "pb.PATIENT_TYPE "
+                    + "pb.ID_TYPE "
                     + "FROM pms_episode pe "
                     + "INNER JOIN pms_patient_biodata pb "
                     + "ON pe.PMI_NO = pb.PMI_NO "
@@ -601,11 +596,11 @@ public final class Generate extends javax.swing.JFrame {
             
             //Search and add miscellaneous item to table.
             String type = data.get(0).get(11);
-            if (type.equals("2")) {
+            if (type.equals("Matric No.")) {
                 type = "RG00001";
-            } else if (type.equals("1")) {
+            } else if (type.equals("Staff No.")) {
                 type = "RG00002";
-            } else if (type.equals("3")) {
+            } else if (type.equals("Foreigner")) {
                 type = "RG00003";
             }
             

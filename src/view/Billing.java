@@ -11,14 +11,11 @@ package view;
  * @author Ho Zhen Hong
  */
 import controller.EmailSender;
-import view.AddBillItem;
 import controller.Receipt;
 import controller.Report;
 import controller.SMSService;
 import controller.Search;
 import controller.YearEndProcess;
-import java.awt.BorderLayout;
-import java.awt.Container;
 import model.Month;
 import model.ServerDetail;
 import java.awt.Desktop;
@@ -29,21 +26,10 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.RowFilter;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.Timer;
-import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -73,6 +59,8 @@ public class Billing extends javax.swing.JFrame {
 
     /**
      * Creates new form billing
+     * @param hostname
+     * @param port
      */
     public Billing(String hostname, int port) {
         initComponents();
@@ -1634,54 +1622,42 @@ public class Billing extends javax.swing.JFrame {
         btn_mm_Delete.setEnabled(false);
 
         String mm_ItemCode = jtf_mm_ItemCd.getText();
-        String mm_ItemDesc = jtf_mm_ItemDesc.getText();
-        String mm_BuyPrice = jtf_mm_BuyPrice.getText();
-        String mm_SellPrice = jtf_mm_SellPrice.getText();
 
         if (mm_ItemCode.equals("")) {
             String infoMessage = "Please insert data in Item Code text field.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-
-        } else if (mm_ItemDesc.equals("")) {
-            String infoMessage = "Please insert data in Item Description text field.";
-            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-
-        } else if (mm_BuyPrice.equals("")) {
-            String infoMessage = "Please insert data in Buying price text field.";
-            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-
-        } else if (mm_SellPrice.equals("")) {
-            String infoMessage = "Please insert data in Selling Price text field.";
-            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
-
+            
         } else {
-            int response = JOptionPane.showConfirmDialog(null, "Do you sure to delete selected item?", "Confirm",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (response == JOptionPane.NO_OPTION) {
-            } else if (response == JOptionPane.YES_OPTION) {
-                try {
-                    String sql = "DELETE FROM far_miscellaneous_item "
-                            + "WHERE item_code='" + mm_ItemCode + "'";
-                    rc.setQuerySQL(host, portNo, sql);
+            if (mm_ItemCode.equals("RG00001") || mm_ItemCode.equals("RG00002") || mm_ItemCode.equals("RG00003")){
+                String infoMessage = "This item cannot be remove.";
+                JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.INFORMATION_MESSAGE);
+            } else{
+                int response = JOptionPane.showConfirmDialog(null, "Do you sure to delete selected item?", "Confirm",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (response == JOptionPane.NO_OPTION) {
+                } else if (response == JOptionPane.YES_OPTION) {
+                    try {
+                        String sql = "DELETE FROM far_miscellaneous_item "
+                                + "WHERE item_code='" + mm_ItemCode + "'";
+                        rc.setQuerySQL(host, portNo, sql);
 
-                    String infoMessage = "Selected item deleted successfully..";
-                    JOptionPane.showMessageDialog(null, infoMessage, "Deleted", JOptionPane.INFORMATION_MESSAGE);
+                        String infoMessage = "Selected item deleted successfully..";
+                        JOptionPane.showMessageDialog(null, infoMessage, "Deleted", JOptionPane.INFORMATION_MESSAGE);
 
-                    //Refresh miscellaneous item table
-                    tableManageMiscellaneous();
+                        //Refresh miscellaneous item table
+                        tableManageMiscellaneous();
 
-                    jtf_mm_ItemDesc.setText("");
-                    jtf_mm_BuyPrice.setText("");
-                    jtf_mm_SellPrice.setText("");
-                    generateMiscItemCode();
-                    
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, e);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
+                } else if (response == JOptionPane.CLOSED_OPTION) {
                 }
-            } else if (response == JOptionPane.CLOSED_OPTION) {
-//                System.out.println("JOptionPane closed");
             }
         }
+        jtf_mm_ItemDesc.setText("");
+        jtf_mm_BuyPrice.setText("");
+        jtf_mm_SellPrice.setText("");
+        generateMiscItemCode();
     }//GEN-LAST:event_btn_mm_DeleteActionPerformed
 
     /**
@@ -2310,34 +2286,38 @@ public class Billing extends javax.swing.JFrame {
             String infoMessage = "Please insert data in Code text field.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
-            int response = JOptionPane.showConfirmDialog(null, "Do you sure to delete selected item?", "Confirm",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if(paramCode.equals("BP001") || paramCode.equals("BP002") || paramCode.equals("BP003")){
+                String infoMessage = "This item cannot be remove.";
+                JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.INFORMATION_MESSAGE);
+            } else{
+                int response = JOptionPane.showConfirmDialog(null, "Do you sure to delete selected item?", "Confirm",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-            if (response == JOptionPane.NO_OPTION) {
-            } else if (response == JOptionPane.YES_OPTION) {
+                if (response == JOptionPane.NO_OPTION) {
+                } else if (response == JOptionPane.YES_OPTION) {
 
-                try {
-                    String sql = "DELETE FROM far_billing_parameter "
-                            + "WHERE param_code = '"+ paramCode +"'";
-                    rc.setQuerySQL(host, portNo, sql);
+                    try {
+                        String sql = "DELETE FROM far_billing_parameter "
+                                + "WHERE param_code = '"+ paramCode +"'";
+                        rc.setQuerySQL(host, portNo, sql);
 
-                    String infoMessage = "Selected item deleted successfully.";
-                    JOptionPane.showMessageDialog(null, infoMessage, "Added", JOptionPane.INFORMATION_MESSAGE);
+                        String infoMessage = "Selected item deleted successfully.";
+                        JOptionPane.showMessageDialog(null, infoMessage, "Added", JOptionPane.INFORMATION_MESSAGE);
 
-                    //Refresh miscellaneous item table
-                    tableBillingParameter();
+                        //Refresh miscellaneous item table
+                        tableBillingParameter();
 
-                    jtf_mp_Name.setText("");
-                    jtf_mp_Type.setText("");
-                    jtf_mp_Value.setText("");
-                    jcb_Enable.setSelected(false);
-                    generateParamCode();
-
-                } catch (Exception e){
-                    JOptionPane.showMessageDialog(null, e);
-                }
-            }    
+                    } catch (Exception e){
+                        JOptionPane.showMessageDialog(null, e);
+                    }
+                }    
+            }
         }
+        jtf_mp_Name.setText("");
+        jtf_mp_Type.setText("");
+        jtf_mp_Value.setText("");
+        jcb_Enable.setSelected(false);
+        generateParamCode();
     }//GEN-LAST:event_btn_mp_DeleteActionPerformed
 
     /**
@@ -2557,9 +2537,11 @@ public class Billing extends javax.swing.JFrame {
         int status = yep.backup();
         jpb_ProgressBar1.setValue(status);
         if(status == 100){
-            btn_StartProcess.setEnabled(true);  
             String infoMessage = "Data has been backup.";
             JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);
+            Month month = new Month();
+            if(month.getMonth().equals("11") || month.getMonth().equals("12") || month.getMonth().equals("01"))
+                btn_StartProcess.setEnabled(true);  
         }else{
             String infoMessage = "There is an error during backup process.\n"
                     + "Please contact computer technician for fixing the issue.";
@@ -2574,14 +2556,14 @@ public class Billing extends javax.swing.JFrame {
         int status = yep.startProcess();
         jpb_ProgressBar2.setValue(status);
         if(status == 0){
-            String infoMessage = "The year end process of this year is done.";
+            String infoMessage = "The year end process of current year have been done.\nPlease go to report section to view year end report.";
             JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);
         } else if(status == 50){
             btn_BackupData.setEnabled(true);
             String infoMessage = "There is an error during processing.\n"
                     + "Please restore the customer data and rerun the year end processing.";
             JOptionPane.showMessageDialog(null, infoMessage, "Error!", JOptionPane.INFORMATION_MESSAGE);     
-        }else{
+        }else if (status == 100){
             String infoMessage = "The year end processing is completed.";
             JOptionPane.showMessageDialog(null, infoMessage, "Success!", JOptionPane.INFORMATION_MESSAGE);             
             btn_StartProcess.setEnabled(false);
@@ -2811,12 +2793,18 @@ public class Billing extends javax.swing.JFrame {
      * Auto generate parameter code.
      */
     private void generateParamCode(){
+        String sql = "SELECT param_code "
+                + "FROM far_billing_parameter "
+                + "WHERE param_code =(SELECT MAX(param_code) FROM far_billing_parameter)";
+        ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+        String itemCode = data.get(0).get(0);
+        itemCode = itemCode.replaceAll("[^0-9]", "");
+
         String code = "BP";
         for (int i = 0 ; i < 2 ; i++){
             code = code + "0";
         }
-        DefaultTableModel model = (DefaultTableModel) jt_BillingParameter.getModel();
-        code = code + (model.getRowCount()+1);
+        code = code + (Integer.parseInt(itemCode)+1);
         jtf_mp_Code.setText(code);
     }
     
@@ -2824,12 +2812,17 @@ public class Billing extends javax.swing.JFrame {
      * Auto generate parameter code.
      */
     private void generateMiscItemCode(){
+        String sql = "SELECT item_code "
+                + "FROM far_miscellaneous_item "
+                + "WHERE item_code =(SELECT MAX(item_code) FROM far_miscellaneous_item)";
+        ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
+        String itemCode = data.get(0).get(0);
+        itemCode = itemCode.replaceAll("[^0-9]", "");
         String code = "RG";
         for (int i = 0 ; i < 4 ; i++){
             code = code + "0";
         }
-        DefaultTableModel model = (DefaultTableModel) jt_MM.getModel();
-        code = code + (model.getRowCount()+1);
+        code = code + (Integer.parseInt(itemCode)+1);
         jtf_mm_ItemCd.setText(code);
     }
     
