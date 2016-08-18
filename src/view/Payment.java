@@ -9,7 +9,6 @@ import controller.Receipt;
 import model.Month;
 import model.ServerDetail;
 import controller.EmailSender;
-import controller.SMSService;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import main.RMIConnector;
+import main.SMSService;
 
 /**
  *

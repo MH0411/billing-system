@@ -7,13 +7,11 @@ package view;
 
 /**
  *
- * @author Amalina
  * @author Ho Zhen Hong
  */
 import controller.EmailSender;
 import controller.Receipt;
 import controller.Report;
-import controller.SMSService;
 import controller.Search;
 import controller.YearEndProcess;
 import model.Month;
@@ -36,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import main.RMIConnector;
+import main.SMSService;
 
 public class Billing extends javax.swing.JFrame {
 
@@ -2409,7 +2408,6 @@ public class Billing extends javax.swing.JFrame {
         String ic = jtf_SearchIC.getText();
         String id = jtf_SearchID.getText();
         
-        System.out.println(name + ic + id);
         if (!name.equals("")){
             data = search.searchPatientByName(name);
         } else if (!ic.equals("")){
