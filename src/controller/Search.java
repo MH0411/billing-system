@@ -42,12 +42,13 @@ public class Search {
                     + "WHERE (ec.status = 1 OR ec.status = 3) "
                     + "AND pe.STATUS ='Discharge' "
                     + "AND pom.episode_code like '"+ strDate1 +" %' " 
-                    + "AND pe.episode_date = '"+ strDate +"' "
+                    + "AND pe.episode_date like '"+ strDate1 +" %' "
                     + "AND pb.patient_name LIKE '%"+ name +"%' "
                     + "AND NOT EXISTS ("
                     + "SELECT ch.order_no FROM far_customer_hdr ch "
                     + "WHERE ch.order_no =  pom.order_no) "
                     + "GROUP BY pom.order_no";
+        System.out.println(sql);
         ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql);
         return data;
     }
@@ -68,7 +69,7 @@ public class Search {
                     + "WHERE (ec.status = 1 OR ec.status = 3) "
                     + "AND pe.STATUS ='Discharge' "
                     + "AND pom.episode_code like '"+ strDate1 +" %' " 
-                    + "AND pe.episode_date = '"+ strDate +"' "
+                    + "AND pe.episode_date like '"+ strDate1 +" %' "
                     + "AND pb.new_ic_no = '"+ ic +"' "
                     + "AND NOT EXISTS ("
                     + "SELECT ch.order_no FROM far_customer_hdr ch "
@@ -94,7 +95,7 @@ public class Search {
                     + "WHERE (ec.status = 1 OR ec.status = 3) "
                     + "AND pe.STATUS ='Discharge' "
                     + "AND pom.episode_code like '"+ strDate1 +" %' " 
-                    + "AND pe.episode_date = '"+ strDate +"' "
+                    + "AND pe.episode_date like '"+ strDate1 +" %' "
                     + "AND pb.id_no = '"+ id +"' "
                     + "AND NOT EXISTS ("
                     + "SELECT ch.order_no FROM far_customer_hdr ch "

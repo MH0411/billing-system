@@ -65,8 +65,8 @@ public class Billing extends javax.swing.JFrame {
         initComponents();
         ServerDetail.setHost(hostname);
         ServerDetail.setPort(port);
-        host = ServerDetail.getHost();
-        portNo = ServerDetail.getPort();
+        host = hostname;
+        portNo = port;
         
         init();
         tableManageMiscellaneous();
@@ -1807,7 +1807,7 @@ public class Billing extends javax.swing.JFrame {
             orderNo = jt_PatientInformation.getModel().getValueAt(rowIndex, 1).toString();
 
             DateFormat dateFormat;
-            dateFormat = new SimpleDateFormat("dd/MM/yyyy"); 
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
             Date date = new Date();
             String todayDate = dateFormat.format(date);
 
@@ -1830,10 +1830,9 @@ public class Billing extends javax.swing.JFrame {
             + "AND pom.ORDER_NO = '"+ orderNo +"' "
             + "AND pdd.DRUG_ITEM_CODE = mdc.UD_MDC_CODE "
             + "AND pe.PMI_NO = pb.PMI_NO "
-            + "AND DATE(date_format(str_to_date(pe.episode_date, '%d/%m/%Y'), '%Y-%m-%d')) = DATE(pdm.order_date) "
-            + "AND pe.episode_date = '"+ todayDate +"' "
+            + "AND DATE(pe.episode_date) = DATE(pdm.order_date) "
+            + "AND pe.episode_date LIKE '"+ todayDate +"%' "
             + "GROUP BY pom.ORDER_NO, mdc.UD_MDC_CODE ";
-
             //Execute query
             ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, portNo, sql);
             DefaultTableModel model = (DefaultTableModel) jt_BillDescription.getModel();
