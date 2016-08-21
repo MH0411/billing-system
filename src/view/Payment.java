@@ -403,7 +403,7 @@ public class Payment extends javax.swing.JFrame {
                         + "Grand Total : " + grandTotal + "\n"
                         + "Cash : " + amount + "\n"
                         + "Change : " + change;
-//                SMSService service = new SMSService("+6" + phone, message, ServerDetail.getHost());
+                SMSService service = new SMSService("+6" + phone, message, ServerDetail.getHost());
                 
                 dispose(); 
                 
