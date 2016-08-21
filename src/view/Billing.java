@@ -176,7 +176,7 @@ public class Billing extends javax.swing.JFrame {
         jPanel11 = new javax.swing.JPanel();
         jPanel22 = new javax.swing.JPanel();
         jPanel23 = new javax.swing.JPanel();
-        jtf_ReportIC = new javax.swing.JTextField();
+        jtf_ReportID = new javax.swing.JTextField();
         jPanel24 = new javax.swing.JPanel();
         jcb_Month = new javax.swing.JComboBox<>();
         jPanel25 = new javax.swing.JPanel();
@@ -659,9 +659,9 @@ public class Billing extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_AddItem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50)
+                .addGap(41, 41, 41)
                 .addComponent(btn_DeleteItem, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50)
+                .addGap(59, 59, 59)
                 .addComponent(btn_Payment, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50)
                 .addComponent(btn_PrintReceipt, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1252,11 +1252,11 @@ public class Billing extends javax.swing.JFrame {
         jPanel11.setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel23.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel23.setBorder(javax.swing.BorderFactory.createTitledBorder("Enter IC number*"));
+        jPanel23.setBorder(javax.swing.BorderFactory.createTitledBorder("Enter Other ID*"));
 
-        jtf_ReportIC.addKeyListener(new java.awt.event.KeyAdapter() {
+        jtf_ReportID.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                jtf_ReportICKeyTyped(evt);
+                jtf_ReportIDKeyTyped(evt);
             }
         });
 
@@ -1266,14 +1266,14 @@ public class Billing extends javax.swing.JFrame {
             jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel23Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jtf_ReportIC)
+                .addComponent(jtf_ReportID)
                 .addContainerGap())
         );
         jPanel23Layout.setVerticalGroup(
             jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel23Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jtf_ReportIC, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jtf_ReportID, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1704,23 +1704,23 @@ public class Billing extends javax.swing.JFrame {
                             + "AND item_cd = '"+ itemCode +"' ";
                     rc.setQuerySQL(host, portNo, sql1);
                     
-                    String month = new Month().getCreditMonth();
+                    String month = new Month().getDebitMonth();
                     //Get current credit of customer
                     String sql2 = "SELECT "+ month +" "
                             + "FROM far_customer_ledger "
                             + "WHERE customer_id = '"+ custId +"' ";
                     ArrayList<ArrayList<String>> data1 = rc.getQuerySQL(host, portNo, sql2);
-                    String currentCredit = data1.get(0).get(0);
+                    String currentDebit = data1.get(0).get(0);
                     
-                    if (currentCredit == null){
-                        currentCredit = "0";
+                    if (currentDebit == null){
+                        currentDebit = "0";
                     }
                     
-                    currentCredit = String.valueOf(Double.parseDouble(currentCredit) - Double.parseDouble(itemAmt));
+                    currentDebit = String.valueOf(Double.parseDouble(currentDebit) - Double.parseDouble(itemAmt));
                     
                     //Update customer ledger
                     String sql3 = "UPDATE far_customer_ledger "
-                            + "SET "+ month +" = '"+ currentCredit +"' "
+                            + "SET "+ month +" = '"+ currentDebit +"' "
                             + "WHERE customer_id = '"+ custId +"' ";
                     rc.setQuerySQL(host, portNo, sql3);
                     
@@ -1736,20 +1736,12 @@ public class Billing extends javax.swing.JFrame {
                     itemAmt1 = String.valueOf(Double.parseDouble(itemAmt1) - Double.parseDouble(itemAmt));
                     quantity = String.valueOf(Integer.parseInt(quantity) - Integer.parseInt(qty));
                     
-                    System.out.println(itemAmt);
-                    System.out.println(itemAmt1);
-                    System.out.println(billNo);
-                    System.out.println(qty);
-                    System.out.println(quantity);
-
                     //Update customer hdr
                     String sql5 = "UPDATE far_customer_hdr "
                             + "SET txn_date = '"+ txnDate +"', item_amt = '"+ itemAmt1 +"', quantity = '"+ quantity +"' "
                             + "WHERE bill_no = '"+ billNo +"' "
                             + "AND customer_id = '"+ custId +"'";
                     rc.setQuerySQL(host, portNo, sql5);
-                    
-                    System.out.println(sql5);
                     
                     String infoMessage = "Success delete data";
                     JOptionPane.showMessageDialog(null, infoMessage, "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -1785,7 +1777,6 @@ public class Billing extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, e);
             }
         } else if (response == JOptionPane.CLOSED_OPTION) {
-//            System.out.println("JOptionPane closed");
         }   
         
     }//GEN-LAST:event_btn_DeleteItemActionPerformed
@@ -2102,7 +2093,7 @@ public class Billing extends javax.swing.JFrame {
      */
     private void jtf_mm_BuyPriceKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mm_BuyPriceKeyTyped
         // TODO add your handling code here:
-        if(jtf_mm_ItemCd.getText().length() > 6){
+        if(jtf_mm_BuyPrice.getText().length() > 6){
             evt.consume();
         }
         
@@ -2119,7 +2110,7 @@ public class Billing extends javax.swing.JFrame {
      */
     private void jtf_mm_SellPriceKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_mm_SellPriceKeyTyped
         // TODO add your handling code here:
-        if(jtf_mm_ItemCd.getText().length() > 6){
+        if(jtf_mm_SellPrice.getText().length() > 6){
             evt.consume();
         }
         
@@ -2437,6 +2428,13 @@ public class Billing extends javax.swing.JFrame {
                 jt_PatientInformation.setValueAt(data.get(i).get(6), i, 6);
                 jt_PatientInformation.setValueAt(data.get(i).get(7), i, 7);
             }
+            
+            DefaultTableModel model1 = (DefaultTableModel) jt_ListItemPerPatient.getModel();
+                        //remove all row
+            int rowCount1 = model1.getRowCount();
+            for (int i = rowCount1 - 1; i >= 0; i--) {
+                model1.removeRow(i);
+            }
         }
     }//GEN-LAST:event_btn_SearchBillingActionPerformed
 
@@ -2587,26 +2585,26 @@ public class Billing extends javax.swing.JFrame {
 
     private void btn_YearlyStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_YearlyStatementActionPerformed
         // TODO add your handling code here:
-        String ic = jtf_ReportIC.getText();
+        String id = jtf_ReportID.getText();
         
-        if (!ic.equals("")){
+        if (!id.equals("")){
             Report report = new Report();
-            report.generateYearlyStatement(ic);
+            report.generateYearlyStatement(id);
         } else {
-            String infoMessage = "Please insert IC number before creating report.";
+            String infoMessage = "Please insert other ID before creating report.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btn_YearlyStatementActionPerformed
 
     private void btn_DetailsStatementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DetailsStatementActionPerformed
         // TODO add your handling code here:
-        String ic = jtf_ReportIC.getText();
+        String id = jtf_ReportID.getText();
         
-        if (!ic.equals("")){
+        if (!id.equals("")){
             Report report = new Report();
-            report.generateDetailsStatement(ic, jcb_Month.getSelectedItem().toString(), jcb_Year.getSelectedItem().toString());
+            report.generateDetailsStatement(id, jcb_Month.getSelectedItem().toString(), jcb_Year.getSelectedItem().toString());
         } else {
-            String infoMessage = "Please insert IC number before creating report.";
+            String infoMessage = "Please insert other ID before creating report.";
             JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btn_DetailsStatementActionPerformed
@@ -2631,14 +2629,11 @@ public class Billing extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jtf_SearchICKeyTyped
 
-    private void jtf_ReportICKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_ReportICKeyTyped
+    private void jtf_ReportIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_ReportIDKeyTyped
         // TODO add your handling code here:
-        char c = evt.getKeyChar();
-        if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) 
+        if (jtf_ReportID.getText().length() > 12)
             evt.consume();
-        else if (jtf_ReportIC.getText().length() > 12)
-            evt.consume();
-    }//GEN-LAST:event_jtf_ReportICKeyTyped
+    }//GEN-LAST:event_jtf_ReportIDKeyTyped
 
     private void jtf_SearchNameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_SearchNameKeyTyped
         // TODO add your handling code here:
@@ -2709,7 +2704,8 @@ public class Billing extends javax.swing.JFrame {
             
             tableMiscellaneousItemSorter();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            String infoMessage = "Unable connect to server.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -2742,7 +2738,8 @@ public class Billing extends javax.swing.JFrame {
             generateParamCode();
             
         } catch (Exception e){
-             JOptionPane.showMessageDialog(null, e);
+             String infoMessage = "Unable connect to server.";
+            JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -2934,7 +2931,7 @@ public class Billing extends javax.swing.JFrame {
     private javax.swing.JTable jt_ListPatientBill;
     private javax.swing.JTable jt_MM;
     private javax.swing.JTable jt_PatientInformation;
-    private javax.swing.JTextField jtf_ReportIC;
+    private javax.swing.JTextField jtf_ReportID;
     private javax.swing.JTextField jtf_SearchIC;
     private javax.swing.JTextField jtf_SearchID;
     private javax.swing.JTextField jtf_SearchName;

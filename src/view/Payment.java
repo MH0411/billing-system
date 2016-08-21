@@ -292,12 +292,17 @@ public class Payment extends javax.swing.JFrame {
                         + "WHERE cl.customer_id = '" + custId + "' "
                         + "AND pb.pmi_no = '" + custId + "'";
                 ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql);
-                String creditMonth = data.get(0).get(0);
+                String creditMonth = "0";
                 
-                if (creditMonth == null){
+                if (data.isEmpty()){
                     creditMonth = "0";
+                } else {
+                    creditMonth = data.get(0).get(0);
+                    
+                    if (creditMonth == null)
+                        creditMonth = "0";
                 }
-
+                
                 creditMonth = String.valueOf(Double.parseDouble(creditMonth) + Double.parseDouble(amount));
                 
                 //Update customer ledger credit
@@ -398,12 +403,14 @@ public class Payment extends javax.swing.JFrame {
                         + "Grand Total : " + grandTotal + "\n"
                         + "Cash : " + amount + "\n"
                         + "Change : " + change;
-                SMSService service = new SMSService("+6" + phone, message, ServerDetail.getHost());
+//                SMSService service = new SMSService("+6" + phone, message, ServerDetail.getHost());
                 
                 dispose(); 
                 
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
+                String infoMessage = "There is an error occur. \nPlease contact service provider.";
+                JOptionPane.showMessageDialog(null, infoMessage, "Warning", JOptionPane.WARNING_MESSAGE);
+                dispose();
             }
         }
     }//GEN-LAST:event_btn_MakePaymentActionPerformed

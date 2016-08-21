@@ -448,14 +448,14 @@ public final class Generate extends javax.swing.JFrame {
                     + "AND pb.pmi_no = '"+ pmiNo +"' ";
             ArrayList<ArrayList<String>> data = rc.getQuerySQL(host, port, sql3);
             
-            if (data == null) {
+            if (data.isEmpty()) {
                 //When no customer exist insert
                 String sql4 = "INSERT into far_customer_ledger(customer_id, bill_no, txn_date, bill_desc, bill_amt, "+ debitMonth +" )"
                         + "VALUES('"+ pmiNo +"', '"+ billNo +"', '"+ stringDate +"', '"+ name +"', '"+ grandTotal +"', '"+ grandTotal +"' )";
                 rc.setQuerySQL(host, port, sql4);
             
             } else {
-                //When customer exits update
+                //When customer exits update but no value in that month
                 if (data.get(0).get(0) == null){
                     String sql5 = "UPDATE far_customer_ledger "
                             + "SET "+ debitMonth +" = '"+ grandTotal +"', bill_amt = '"+ grandTotal +"', txn_date = '"+ stringDate +"' "

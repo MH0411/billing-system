@@ -332,27 +332,27 @@ public class AddBillItem extends javax.swing.JFrame {
                     calculateAmount();
 
                     try {
-                        //Get bill's month credit and add the item price
+                        //Get bill's month debit and add the item price
                         month.setMonth(billNo.substring(10,12));
                         
-                        String sql2 = "SELECT cl."+ month.getCreditMonth() +" "
+                        String sql2 = "SELECT cl."+ month.getDebitMonth() +" "
                                 + "FROM far_customer_ledger cl, pms_patient_biodata pb "
                                 + "WHERE cl.customer_id = '"+ custId +"' "
                                 + "AND pb.pmi_no = '"+ custId +"'";
                         ArrayList<ArrayList<String>> data1 = rc.getQuerySQL(host, port, sql2);
                         
-                        String currentCredit = "";
+                        String currentDebit = "";
                         if (data1.get(0).get(0) == null){
-                            currentCredit = "0"; 
+                            currentDebit = "0"; 
                         } else {
-                            currentCredit = data1.get(0).get(0);
+                            currentDebit = data1.get(0).get(0);
                         }
                         
-                        currentCredit = String.valueOf(Double.parseDouble(currentCredit) + totalPrice);
+                        currentDebit = String.valueOf(Double.parseDouble(currentDebit) + totalPrice);
 
                         //Update customer ledger
                         String sql3 = "UPDATE far_customer_ledger "
-                                + "SET "+ month.getCreditMonth() +" = '"+ currentCredit +"', txn_date = '"+ txnDate +"' "
+                                + "SET "+ month.getDebitMonth() +" = '"+ currentDebit +"', txn_date = '"+ txnDate +"' "
                                 + "WHERE customer_id = '"+ custId +"' ";
                         rc.setQuerySQL(host, port, sql3);
 
@@ -425,21 +425,21 @@ public class AddBillItem extends javax.swing.JFrame {
             
             calculateAmount();
                     
-            //Get bill's month credit and add the item price
+            //Get bill's month debit and add the item price
             month.setMonth(billNo.substring(10,12));
             
-            String sql2 = "SELECT cl."+ month.getCreditMonth() +" "
+            String sql2 = "SELECT cl."+ month.getDebitMonth() +" "
                     + "FROM far_customer_ledger cl, pms_patient_biodata pb "
                     + "WHERE cl.customer_id = '"+ custId +"' "
                     + "AND pb.pmi_no = '"+ custId +"'";
             ArrayList<ArrayList<String>> data1 = rc.getQuerySQL(host, port, sql2);
-            String currentCredit = data1.get(0).get(0);
+            String currentDebit = data1.get(0).get(0);
 
-            currentCredit = String.valueOf(Double.parseDouble(currentCredit) + totalPrice);
+            currentDebit = String.valueOf(Double.parseDouble(currentDebit) + totalPrice);
 
             //Update customer ledger
             String sql3 = "UPDATE far_customer_ledger "
-            + "SET "+ month.getCreditMonth() +" = '"+ currentCredit +"', txn_date = '"+ txnDate +"' "
+            + "SET "+ month.getDebitMonth() +" = '"+ currentDebit +"', txn_date = '"+ txnDate +"' "
             + "WHERE customer_id = '"+ custId +"' ";
             rc.setQuerySQL(host, port, sql3);
 
