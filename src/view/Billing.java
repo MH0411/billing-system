@@ -2102,6 +2102,11 @@ public class Billing extends javax.swing.JFrame {
                 || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
             evt.consume();
         }
+        
+        if(jtf_mm_BuyPrice.getText().contains(".")){
+            if(c == KeyEvent.VK_PERIOD)
+                evt.consume();
+        }
     }//GEN-LAST:event_jtf_mm_BuyPriceKeyTyped
 
     /**
@@ -2118,6 +2123,11 @@ public class Billing extends javax.swing.JFrame {
         if (!(Character.isDigit(c) || c == KeyEvent.VK_PERIOD
                 || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
             evt.consume();
+        }
+        
+        if(jtf_mm_SellPrice.getText().contains(".")){
+            if(c == KeyEvent.VK_PERIOD)
+                evt.consume();
         }
     }//GEN-LAST:event_jtf_mm_SellPriceKeyTyped
 
@@ -2386,6 +2396,11 @@ public class Billing extends javax.swing.JFrame {
         if (!(Character.isDigit(c) || c == KeyEvent.VK_PERIOD
                 || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
             evt.consume();
+        }
+        
+        if(jtf_mp_Value.getText().contains(".")){
+            if(c == KeyEvent.VK_PERIOD)
+                evt.consume();
         }
     }//GEN-LAST:event_jtf_mp_ValueKeyTyped
 

@@ -429,6 +429,10 @@ public class Payment extends javax.swing.JFrame {
         } else if (jtf_Amount.getText().length() > 8) {
             evt.consume();
         }
+        if(jtf_Amount.getText().contains(".")){
+            if(c == KeyEvent.VK_PERIOD)
+                evt.consume();
+        }
     }//GEN-LAST:event_jtf_AmountKeyTyped
 
     /**
