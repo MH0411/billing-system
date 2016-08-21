@@ -426,7 +426,8 @@ public class Payment extends javax.swing.JFrame {
         if (!(Character.isDigit(c) || c == KeyEvent.VK_PERIOD
                 || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
             evt.consume();
-        } else if (jtf_Amount.getText().length() > 8) {
+        }
+        if (jtf_Amount.getText().length() > 8) {
             evt.consume();
         }
         if(jtf_Amount.getText().contains(".")){
