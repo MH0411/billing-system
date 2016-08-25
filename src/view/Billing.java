@@ -2853,7 +2853,7 @@ public class Billing extends javax.swing.JFrame {
     }
     
     public static void main(String[] args) {
-        new Billing("10.73.32.200", 1099).setVisible(true);
+        new Billing("10.73.32.201", 1099).setVisible(true);
     }
 
 
