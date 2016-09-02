@@ -118,7 +118,7 @@ public class EmailSender {
             }
 //            System.out.println(json);
 
-            URL url = new URL("http://10.73.32.200/Testing/Servlet");
+            URL url = new URL("http://10.73.32.201/SendEmail/Servlet");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
